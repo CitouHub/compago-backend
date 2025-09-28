@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compago.Service", "Compago.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compago.Common", "Compago.Common\Compago.Common.csproj", "{E16C7679-A6EF-40FD-80EB-63906F35BC94}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compago.Test", "Compago.Test\Compago.Test.csproj", "{280F41DF-EB65-44F2-9ABE-4B1633479BBD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compago.Data", "Compago.Data\Compago.Data.csproj", "{5DCF4A9A-4680-6090-1F46-9701CE93D891}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,14 @@ Global
 		{E16C7679-A6EF-40FD-80EB-63906F35BC94}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E16C7679-A6EF-40FD-80EB-63906F35BC94}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E16C7679-A6EF-40FD-80EB-63906F35BC94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{280F41DF-EB65-44F2-9ABE-4B1633479BBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{280F41DF-EB65-44F2-9ABE-4B1633479BBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{280F41DF-EB65-44F2-9ABE-4B1633479BBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{280F41DF-EB65-44F2-9ABE-4B1633479BBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DCF4A9A-4680-6090-1F46-9701CE93D891}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DCF4A9A-4680-6090-1F46-9701CE93D891}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DCF4A9A-4680-6090-1F46-9701CE93D891}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DCF4A9A-4680-6090-1F46-9701CE93D891}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

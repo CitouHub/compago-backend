@@ -2,7 +2,16 @@
 {
     public class BillingDTO
     {
-        public string Currency { get; set; } = null!;
+        private string CurrencyValue = null!;
+        public string Currency
+        {
+            set { CurrencyValue = value; }
+            get
+            {
+                return CurrencyValue?.ToUpper() ?? null!;
+            }
+        }
+
         public List<InvoiceDTO> Invoices { get; set; } = [];
     }
 }

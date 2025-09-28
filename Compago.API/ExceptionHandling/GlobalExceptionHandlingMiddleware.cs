@@ -53,6 +53,7 @@ namespace Compago.API.ExceptionHandling
                         typeUrl = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.4";
                         break;
                     case ExceptionType.ExternalSourceCallError:
+                    case ExceptionType.CurrencyServiceCallError:
                     case ExceptionType.InvalidConfiguration:
                     case ExceptionType.Unknown:
                         status = HttpStatusCode.InternalServerError;
@@ -78,12 +79,12 @@ namespace Compago.API.ExceptionHandling
                 Type = typeUrl,
                 Title = title,
                 Status = (int)status,
-                Errors = new List<string>() {
+                Details = [
                     exception.Message,
                     exception.InnerException?.Message ?? "",
                     exception.InnerException?.InnerException?.Message ?? "",
                     exception.StackTrace ?? ""
-                }
+                ]
             });
         }
     }

@@ -11,7 +11,7 @@ namespace Compago.Service.ExternalSource.GSuite
 {
     public interface IGSuiteService
     {
-        Task<BillingDTO> GetBillingAsync(
+        Task<BillingDTO?> GetBillingAsync(
             DateTime fromDate,
             DateTime toDate);
     }
@@ -22,7 +22,7 @@ namespace Compago.Service.ExternalSource.GSuite
         IOptions<ExternalSourceSettings.GSuite> settings
     ) : IGSuiteService
     {
-        public async Task<BillingDTO> GetBillingAsync(
+        public async Task<BillingDTO?> GetBillingAsync(
             DateTime fromDate,
             DateTime toDate)
         {
@@ -57,7 +57,7 @@ namespace Compago.Service.ExternalSource.GSuite
             await getTask.WaitAsync(cancellationToken);
 
             var data = JsonConvert.DeserializeObject<Data>(getTask.Result);
-            return mapper.Map<BillingDTO>(data!.FinancialInfo);
+            return data != null ? mapper.Map<BillingDTO>(data.FinancialInfo) : null;
         }
     }
 }

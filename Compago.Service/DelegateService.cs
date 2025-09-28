@@ -3,12 +3,13 @@ using Compago.Domain;
 using Compago.Service.CustomeException;
 using Compago.Service.ExternalSource.GSuite;
 using Compago.Service.ExternalSource.MicrosoftAzure;
+using Microsoft.Extensions.Logging;
 
 namespace Compago.Service
 {
     public interface IDelegateService
     {
-        Task<BillingDTO> GetBillingAsync(
+        Task<BillingDTO?> GetBillingAsync(
             SupportedExternalSource supportedExternalSource, 
             DateTime fromDate, 
             DateTime toDate,
@@ -16,16 +17,22 @@ namespace Compago.Service
     }
 
     public class DelegateService(
+        ILogger<DelegateService> logger,
         IGSuiteService gSuiteService,
         IMicrosoftAzureService microsoftAzureService,
         ICurrencyService currencyService) : IDelegateService
     {
-        public async Task<BillingDTO> GetBillingAsync(
+        public async Task<BillingDTO?> GetBillingAsync(
             SupportedExternalSource supportedExternalSource,
             DateTime fromDate,
             DateTime toDate,
             string? currency = null)
         {
+            logger.LogDebug("{message}", @$"{supportedExternalSource}, 
+                {fromDate:yyyy-MM-dd}, 
+                {toDate:yyyy-MM-dd}, 
+                {currency}");
+
             var billing = supportedExternalSource switch
             {
                 SupportedExternalSource.GSuite => await gSuiteService.GetBillingAsync(fromDate, toDate),
@@ -33,10 +40,10 @@ namespace Compago.Service
                 _ => throw new ServiceException(ExceptionType.ExternalSourceNotSupported)
             };
 
-            if (currency != null)
+            if (billing != null && String.IsNullOrEmpty(currency?.Trim()) == false)
             {
                 billing.Invoices.ForEach(async _ => await UpdateInvoiceAsync(_, billing.Currency, currency));
-                billing.Currency = currency.ToUpper();
+                billing.Currency = currency;
             }
 
             return billing;
@@ -44,8 +51,8 @@ namespace Compago.Service
 
         private async Task UpdateInvoiceAsync(InvoiceDTO invoice, string currentCurrency, string requestedCurrency)
         {
-            var (amount, exchangeRate) = await currencyService.ConvertAsync(invoice.Price, currentCurrency, requestedCurrency, invoice.Date);
-            invoice.Price = amount;
+            var exchangeRate = await currencyService.GetExchangeRateAsync(currentCurrency, requestedCurrency, invoice.Date);
+            invoice.Price = Math.Round(invoice.Price * exchangeRate, 2);
             invoice.ExchangeRate = exchangeRate;
         }
     }

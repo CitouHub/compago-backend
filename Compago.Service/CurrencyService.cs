@@ -5,13 +5,12 @@ namespace Compago.Service
 {
     public interface ICurrencyService
     {
-        Task<(double amount, double? exchangeRate)> ConvertAsync(double amount, string from, string to, DateTime date);
+        Task<double> GetExchangeRateAsync(string fromCurrency, string toCurrency, DateTime date);
     }
 
     public class CurrencyService() : ICurrencyService
     {
-        public async Task<(double amount, double? exchangeRate)> ConvertAsync(
-            double amount, 
+        public async Task<double> GetExchangeRateAsync(
             string fromCurrency, 
             string toCurrency, 
             DateTime date)
@@ -26,7 +25,7 @@ namespace Compago.Service
                 // #############################
                 var cancellationTokenSource = new CancellationTokenSource();
                 var cancellationToken = cancellationTokenSource.Token;
-                var convertTask = new Task<(double amount, double? exchangeRate)>(_ =>
+                var convertTask = new Task<double>(_ =>
                 {
                     try
                     {
@@ -45,9 +44,8 @@ namespace Compago.Service
                         var dateFactorModifier = short.Parse(dateFactorModifierKeyString.Substring(dateFactorModifierKeyString.Length - 2, 2));
 
                         var exchangeRate = Math.Round((baseFactorInverse ? 1 / baseFactorBase : baseFactorBase) * (0.95 + 0.001 * dateFactorModifier), 2);
-                        var toCurrencyAmount = Math.Round(amount * exchangeRate, 2);
 
-                        return (toCurrencyAmount, exchangeRate);
+                        return exchangeRate;
                     }
                     catch (Exception ex)
                     {
@@ -60,7 +58,7 @@ namespace Compago.Service
                 return convertTask.Result;
             }
 
-            return (amount, null);
+            return 1;
         }
     }
 }

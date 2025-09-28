@@ -8,6 +8,6 @@
 
         public int? Status { get; set; }
 
-        public object Errors { get; set; } = new object();
+        public List<string> Details { get; set; } = [];
     }
 }

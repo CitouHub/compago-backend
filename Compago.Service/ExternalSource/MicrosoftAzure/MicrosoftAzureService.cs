@@ -11,7 +11,7 @@ namespace Compago.Service.ExternalSource.MicrosoftAzure
 {
     public interface IMicrosoftAzureService
     {
-        Task<BillingDTO> GetBillingAsync(
+        Task<BillingDTO?> GetBillingAsync(
             DateTime fromDate,
             DateTime toDate);
     }
@@ -22,7 +22,7 @@ namespace Compago.Service.ExternalSource.MicrosoftAzure
         IOptions<ExternalSourceSettings.MicrosoftAzure> settings
     ) : IMicrosoftAzureService
     {
-        public async Task<BillingDTO> GetBillingAsync(
+        public async Task<BillingDTO?> GetBillingAsync(
             DateTime fromDate,
             DateTime toDate)
         {
@@ -54,7 +54,7 @@ namespace Compago.Service.ExternalSource.MicrosoftAzure
             await getTask.WaitAsync(cancellationToken);
 
             var payload = JsonConvert.DeserializeObject<Payload>(getTask.Result);
-            return mapper.Map<BillingDTO>(payload!.Expenses);
+            return payload != null ? mapper.Map<BillingDTO>(payload.Expenses) : null;
         }
     } 
 }

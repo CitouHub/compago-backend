@@ -6,25 +6,27 @@ namespace Compago.Service.Config
     {
         public class EX
         {
-            private readonly string? APIKeyValue;
+            private string? APIKeyValue = null;
             public string APIKey
             {
+                set { APIKeyValue = value; }
                 get
                 {
                     return APIKeyValue ?? throw new ServiceException(
                     ExceptionType.InvalidConfiguration,
-                    details:  $"EX: {nameof(APIKey)} is missing/invalid");
+                    details: $"{nameof(CurrencyServiceSettings)}: {nameof(EX)}: {nameof(APIKey)} is missing/invalid");
                 }
             }
 
-            private readonly string? URLValue;
+            private string? URLValue = null;
             public string URL
             {
+                set { URLValue = value; }
                 get
                 {
                     return URLValue ?? throw new ServiceException(
                     ExceptionType.InvalidConfiguration,
-                    details: $"EX: {nameof(URL)} is missing/invalid");
+                    details: $"{nameof(CurrencyServiceSettings)}: {nameof(EX)}: {nameof(URL)} is missing/invalid");
                 }
             }
         }
