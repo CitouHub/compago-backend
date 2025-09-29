@@ -20,6 +20,19 @@ namespace Compago.Test.Service
                 // Assert
                 Assert.NotEqual(0, response);
             }
+
+            [Fact]
+            public async Task Success_SameFromTo()
+            {
+                // Arrange
+                var currencyService = new CurrencyService();
+
+                // Act 
+                var response = await currencyService.GetExchangeRateAsync("SaME", "saME", DateTime.UtcNow);
+
+                // Assert
+                Assert.Equal(1, response);
+            }
         }
     }
 }
