@@ -76,7 +76,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-coverage-controller
-          path: /home/runner/work/compago/compago/${{ steps.get_test-coverage-file.outputs.test-coverage-file }}
+          path: /home/runner/work/compago-backend/compago-backend/${{ steps.get_test-coverage-file.outputs.test-coverage-file }}
           if-no-files-found: error
 
   service_tests:
@@ -125,7 +125,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-coverage-service
-          path: /home/runner/work/compago/compago/${{ steps.get-test-coverage-file.outputs.test-coverage-file }}
+          path: /home/runner/work/compago-backend/compago-backend/${{ steps.get-test-coverage-file.outputs.test-coverage-file }}
           if-no-files-found: error
 
   other_tests:
@@ -174,7 +174,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-coverage-other
-          path: /home/runner/work/compago/compago/${{ steps.get_test-coverage-file.outputs.test-coverage-file }}
+          path: /home/runner/work/compago-backend/compago-backend/${{ steps.get_test-coverage-file.outputs.test-coverage-file }}
           if-no-files-found: error
 
   code_coverage:
