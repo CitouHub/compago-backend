@@ -13,6 +13,7 @@ namespace Compago.Test.API.ExceptionHandling
     {
         [Theory]
         [InlineData(ExceptionType.ItemNotFound, HttpStatusCode.NotFound)]
+        [InlineData(ExceptionType.ItemAlreadyExist, HttpStatusCode.Conflict)]
         [InlineData(ExceptionType.InvalidRequest, HttpStatusCode.BadRequest)]
         [InlineData(ExceptionType.ExternalSourceNotSupported, HttpStatusCode.Forbidden)]
         [InlineData(ExceptionType.ExternalSourceCallError, HttpStatusCode.InternalServerError)]

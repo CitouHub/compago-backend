@@ -9,7 +9,7 @@ namespace Compago.Test.Helper.Domain
             int? id = 1,
             string username = "TestUser",
             string password = "Password",
-            Common.Role roleId = Common.Role.Admin)
+            Compago.Common.Role roleId = Compago.Common.Role.Admin)
         {
             return new UserDTO()
             {
@@ -24,7 +24,7 @@ namespace Compago.Test.Helper.Domain
             int id = 1,
             string username = "TestUser",
             string passwordHash = "PasswordHash",
-            Common.Role roleId = Common.Role.Admin)
+            Compago.Common.Role roleId = Compago.Common.Role.Admin)
         {
             return new User()
             {
