@@ -16,5 +16,16 @@ namespace Compago.Test.Domain
             // Assert
             Assert.Equal(currency.ToUpper(), billing.Currency);
         }
+
+        [Fact]
+        public static void CurrencyNull()
+        {
+            // Arrange
+            var billing = BillingHelper.New();
+            billing.Currency = null!;
+
+            // Assert
+            Assert.Null(billing.Currency);
+        }
     }
 }

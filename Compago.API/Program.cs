@@ -4,7 +4,7 @@ using Compago.API.ExceptionHandling;
 using Compago.API.SwaggerConfig;
 using Compago.Mapping;
 using Compago.Service;
-using Compago.Service.Config;
+using Compago.Service.Settings;
 using Compago.Service.ExternalSource.GSuite;
 using Compago.Service.ExternalSource.MicrosoftAzure;
 using System.Text.Json.Serialization;

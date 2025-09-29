@@ -1,4 +1,4 @@
-﻿using Compago.Service.Config;
+﻿using Compago.Service.Settings;
 using Microsoft.Extensions.Options;
 
 namespace Compago.Test.Helper

@@ -1,6 +1,6 @@
 ﻿using Compago.Service.CustomeException;
 
-namespace Compago.Service.Config
+namespace Compago.Service.Settings
 {
     public class CurrencyServiceSettings
     {

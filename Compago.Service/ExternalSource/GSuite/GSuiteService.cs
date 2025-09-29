@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Compago.Domain;
 using Compago.Domain.ExternalSourceExample.GSuite;
-using Compago.Service.Config;
+using Compago.Service.Settings;
 using Compago.Service.CustomeException;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

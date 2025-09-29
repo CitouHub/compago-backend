@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Compago.Service;
-using Compago.Service.Config;
+using Compago.Service.Settings;
 using Compago.Service.ExternalSource.GSuite;
 using Compago.Service.ExternalSource.MicrosoftAzure;
 using Compago.Test.Helper;
