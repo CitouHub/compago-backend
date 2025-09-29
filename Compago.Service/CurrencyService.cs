@@ -43,7 +43,7 @@ namespace Compago.Service
                         var dateFactorModifierKeyString = ((decimal)baseFactorKeyLong / dateFactorModifierKeyLong).ToString();
                         var dateFactorModifier = short.Parse(dateFactorModifierKeyString.Substring(dateFactorModifierKeyString.Length - 2, 2));
 
-                        var exchangeRate = Math.Round((baseFactorInverse ? 1 / baseFactorBase : baseFactorBase) * (0.95 + 0.001 * dateFactorModifier), 2);
+                        var exchangeRate = Math.Round((baseFactorInverse ? 1.0 / baseFactorBase : baseFactorBase) * (0.95 + 0.001 * dateFactorModifier), 2);
 
                         return exchangeRate;
                     }
