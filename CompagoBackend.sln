@@ -20,9 +20,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitHub Actions", "GitHub Actions", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\code-analysis.yml = .github\workflows\code-analysis.yml
-		.github\workflows\e2e-tests-prod.yml = .github\workflows\e2e-tests-prod.yml
-		.github\workflows\e2e-tests-stage.yml = .github\workflows\e2e-tests-stage.yml
-		.github\workflows\e2e-tests.yml = .github\workflows\e2e-tests.yml
 		.github\workflows\release-prod.yml = .github\workflows\release-prod.yml
 		.github\workflows\release-stage.yml = .github\workflows\release-stage.yml
 		.github\workflows\release.yml = .github\workflows\release.yml

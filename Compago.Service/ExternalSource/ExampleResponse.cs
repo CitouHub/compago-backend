@@ -5,7 +5,7 @@ namespace Compago.Service.ExternalSource
 {
     public static class ExampleResponse
     {
-        public static Data GetExample()
+        public static Info GetExample()
         {
             return new()
             {

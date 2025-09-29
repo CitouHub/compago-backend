@@ -2,14 +2,17 @@ using Asp.Versioning;
 using AutoMapper;
 using Compago.API.ExceptionHandling;
 using Compago.API.SwaggerConfig;
+using Compago.Data;
 using Compago.Mapping;
 using Compago.Service;
-using Compago.Service.Settings;
 using Compago.Service.ExternalSource.GSuite;
 using Compago.Service.ExternalSource.MicrosoftAzure;
+using Compago.Service.Settings;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
 var logger = LoggerFactory.Create(config =>
 {
     config.AddConsole();
@@ -47,11 +50,17 @@ builder.Host.ConfigureServices((context, services) =>
     services.Configure<CurrencyServiceSettings.EX>(context.Configuration.GetSection("CurrencyServiceSettings:EX"));
 });
 
+builder.Services.AddDbContext<CompagoDbContext>(options =>
+{
+    options.UseSqlServer(configuration.GetValue<string>("Database:ConnectionString"));
+});
+
 var mappingConfig = new MapperConfiguration(config =>
 {
     config.AddProfiles([
         new GSuiteProfile(), 
-        new MicrosoftAzureProfile()
+        new MicrosoftAzureProfile(),
+        new InternalProfile()
     ]);
 }, logger);
 var mapper = mappingConfig.CreateMapper();
@@ -61,6 +70,9 @@ builder.Services.AddScoped<IDelegateService, DelegateService>();
 builder.Services.AddScoped<ICurrencyService, CurrencyService>();
 builder.Services.AddScoped<IGSuiteService, GSuiteService>();
 builder.Services.AddScoped<IMicrosoftAzureService, MicrosoftAzureService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ITagService, TagService>();
+builder.Services.AddScoped<IInvoiceTagService, InvoiceTagService>();
 
 var app = builder.Build();
 

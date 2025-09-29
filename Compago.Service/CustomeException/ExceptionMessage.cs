@@ -14,7 +14,7 @@
         {
             return exceptionType switch
             {
-                ExceptionType.InvoiceNotFound => InvoiceNotFound,
+                ExceptionType.ItemNotFound => InvoiceNotFound,
                 ExceptionType.ExternalSourceNotSupported => ExternalSourceNotSupported,
                 ExceptionType.ExternalSourceCallError => ExternalSourceCallError,
                 ExceptionType.CurrencyServiceCallError => CurrencyServiceCallError,

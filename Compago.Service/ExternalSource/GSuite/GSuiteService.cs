@@ -57,7 +57,7 @@ namespace Compago.Service.ExternalSource.GSuite
             task.Start();
             await task.WaitAsync(cancellationToken);
 
-            var data = JsonConvert.DeserializeObject<Data>(task.Result);
+            var data = JsonConvert.DeserializeObject<Info>(task.Result);
             return data != null ? mapper.Map<BillingDTO>(data.FinancialInfo) : null;
         }
     }

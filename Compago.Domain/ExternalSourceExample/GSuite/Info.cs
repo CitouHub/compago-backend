@@ -1,6 +1,6 @@
 ﻿namespace Compago.Domain.ExternalSourceExample.GSuite
 {
-    public class Data
+    public class Info
     {
         public FinancialInfo FinancialInfo { get; set; } = null!;
     }

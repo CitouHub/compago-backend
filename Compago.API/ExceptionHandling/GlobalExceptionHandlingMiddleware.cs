@@ -47,10 +47,15 @@ namespace Compago.API.ExceptionHandling
                         title = "Forbidden request";
                         typeUrl = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.3";
                         break;
-                    case ExceptionType.InvoiceNotFound:
+                    case ExceptionType.ItemNotFound:
                         status = HttpStatusCode.NotFound;
                         title = "Entity not found";
                         typeUrl = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.4";
+                        break;
+                    case ExceptionType.ItemAlreadyExist:
+                        status = HttpStatusCode.Conflict;
+                        title = "Entity exists";
+                        typeUrl = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.8";
                         break;
                     case ExceptionType.ExternalSourceCallError:
                     case ExceptionType.CurrencyServiceCallError:

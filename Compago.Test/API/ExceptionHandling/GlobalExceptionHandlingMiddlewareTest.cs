@@ -12,7 +12,7 @@ namespace Compago.Test.API.ExceptionHandling
     public class GlobalExceptionHandlingMiddlewareTest
     {
         [Theory]
-        [InlineData(ExceptionType.InvoiceNotFound, HttpStatusCode.NotFound)]
+        [InlineData(ExceptionType.ItemNotFound, HttpStatusCode.NotFound)]
         [InlineData(ExceptionType.InvalidRequest, HttpStatusCode.BadRequest)]
         [InlineData(ExceptionType.ExternalSourceNotSupported, HttpStatusCode.Forbidden)]
         [InlineData(ExceptionType.ExternalSourceCallError, HttpStatusCode.InternalServerError)]

@@ -2,7 +2,8 @@
 {
     public enum ExceptionType
     {
-        InvoiceNotFound,
+        ItemNotFound,
+        ItemAlreadyExist,
         InvalidRequest,
         ExternalSourceNotSupported,
         ExternalSourceCallError,

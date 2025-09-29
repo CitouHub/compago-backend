@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Compago.Data;
 
-public partial class User
+public partial class Role
 {
-    public int Id { get; set; }
+    public byte Id { get; set; }
 
     public DateTime CreatedAt { get; set; }
 
@@ -15,11 +15,7 @@ public partial class User
 
     public int? UpdatedBy { get; set; }
 
-    public byte RoleId { get; set; }
+    public string Name { get; set; } = null!;
 
-    public string Username { get; set; } = null!;
-
-    public string PasswordHash { get; set; } = null!;
-
-    public virtual Role Role { get; set; } = null!;
+    public virtual ICollection<User> Users { get; set; } = new List<User>();
 }

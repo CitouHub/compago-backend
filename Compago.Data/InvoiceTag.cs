@@ -3,9 +3,11 @@ using System.Collections.Generic;
 
 namespace Compago.Data;
 
-public partial class User
+public partial class InvoiceTag
 {
-    public int Id { get; set; }
+    public string InvoiceId { get; set; } = null!;
+
+    public short TagId { get; set; }
 
     public DateTime CreatedAt { get; set; }
 
@@ -15,11 +17,5 @@ public partial class User
 
     public int? UpdatedBy { get; set; }
 
-    public byte RoleId { get; set; }
-
-    public string Username { get; set; } = null!;
-
-    public string PasswordHash { get; set; } = null!;
-
-    public virtual Role Role { get; set; } = null!;
+    public virtual Tag Tag { get; set; } = null!;
 }

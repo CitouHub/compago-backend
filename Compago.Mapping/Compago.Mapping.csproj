@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Compago.Common\Compago.Common.csproj" />
+    <ProjectReference Include="..\Compago.Data\Compago.Data.csproj" />
     <ProjectReference Include="..\Compago.Domain\Compago.Domain.csproj" />
   </ItemGroup>
 

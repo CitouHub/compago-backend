@@ -24,6 +24,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Compago.Common\Compago.Common.csproj" />
+        <ProjectReference Include="..\Compago.Data\Compago.Data.csproj" />
         <ProjectReference Include="..\Compago.Mapping\Compago.Mapping.csproj" />
         <ProjectReference Include="..\Compago.Service\Compago.Service.csproj" />
     </ItemGroup>
