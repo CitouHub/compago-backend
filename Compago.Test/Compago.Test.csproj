@@ -23,10 +23,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Context\" />
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\Compago.API\Compago.API.csproj" />
         <ProjectReference Include="..\Compago.Data\Compago.Data.csproj" />
         <ProjectReference Include="..\Compago.Service\Compago.Service.csproj" />

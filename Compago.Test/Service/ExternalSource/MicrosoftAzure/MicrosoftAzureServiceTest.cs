@@ -15,7 +15,7 @@ namespace Compago.Test.Service.ExternalSource.MicrosoftAzure
                 var microsoftAzureService = new MicrosoftAzureService(_microsoftAzureServiceLogger, _mapper, _microsoftAzureDefaultOptions);
 
                 // Act 
-                var response = await microsoftAzureService.GetBillingAsync(DateTime.UtcNow, DateTime.UtcNow);
+                var response = await microsoftAzureService.GetBillingAsync(new DateTime(2025, 01, 01), new DateTime(2025, 12, 31));
 
                 // Assert
                 Assert.NotNull(response);

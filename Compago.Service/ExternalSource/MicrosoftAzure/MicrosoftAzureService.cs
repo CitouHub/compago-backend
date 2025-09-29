@@ -26,6 +26,7 @@ namespace Compago.Service.ExternalSource.MicrosoftAzure
             DateTime fromDate,
             DateTime toDate)
         {
+            logger.LogDebug("{message}", $"AUTH {settings.Value.AccessId} {settings.Value.InvoiceAPIKey} {settings.Value.Subscription}");
             logger.LogDebug("{message}", $"GET {settings.Value.URL}/{fromDate:yyyy-MM-dd}/{toDate:yyyy-MM-dd}");
 
             // #############################

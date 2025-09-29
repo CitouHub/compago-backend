@@ -12,7 +12,7 @@ namespace Compago.Test.Service
             public async Task Success()
             {
                 // Arrange
-                var currencyService = new CurrencyService();
+                var currencyService = new CurrencyService(_currencyServiceLogger, _exDefaultOptions);
 
                 // Act 
                 var response = await currencyService.GetExchangeRateAsync("FROM", "TO", DateTime.UtcNow);
@@ -25,7 +25,7 @@ namespace Compago.Test.Service
             public async Task Success_SameFromTo()
             {
                 // Arrange
-                var currencyService = new CurrencyService();
+                var currencyService = new CurrencyService(_currencyServiceLogger, _exDefaultOptions);
 
                 // Act 
                 var response = await currencyService.GetExchangeRateAsync("SaME", "saME", DateTime.UtcNow);

@@ -26,6 +26,7 @@ namespace Compago.Service.ExternalSource.GSuite
             DateTime fromDate,
             DateTime toDate)
         {
+            logger.LogDebug("{message}", $"AUTH {settings.Value.Username} {settings.Value.Password}");
             logger.LogDebug("{message}", $"GET {settings.Value.URL}/{fromDate:yyyy-MM-dd}/{toDate:yyyy-MM-dd}");
 
             // #############################

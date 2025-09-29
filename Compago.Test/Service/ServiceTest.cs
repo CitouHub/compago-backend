@@ -21,6 +21,7 @@ namespace Compago.Test.Service
         protected static readonly ILogger<DelegateService> _delegateServiceLogger = Substitute.For<ILogger<DelegateService>>();
         protected static readonly ILogger<GSuiteService> _gSuiteServiceLogger = Substitute.For<ILogger<GSuiteService>>();
         protected static readonly ILogger<MicrosoftAzureService> _microsoftAzureServiceLogger = Substitute.For<ILogger<MicrosoftAzureService>>();
+        protected static readonly ILogger<CurrencyService> _currencyServiceLogger = Substitute.For<ILogger<CurrencyService>>();
 
         protected static readonly IDelegateService _delegateService = Substitute.For<IDelegateService>();
         protected static readonly IGSuiteService _gSuiteService = Substitute.For<IGSuiteService>();

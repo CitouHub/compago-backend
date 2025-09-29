@@ -15,7 +15,7 @@ namespace Compago.Test.Service.ExternalSource.GSuite
                 var gSuiteService = new GSuiteService(_gSuiteServiceLogger, _mapper, _gSuiteDefaultOptions);
 
                 // Act 
-                var response = await gSuiteService.GetBillingAsync(DateTime.UtcNow, DateTime.UtcNow);
+                var response = await gSuiteService.GetBillingAsync(new DateTime(2025, 01, 01), new DateTime(2025, 12, 31));
 
                 // Assert
                 Assert.NotNull(response);

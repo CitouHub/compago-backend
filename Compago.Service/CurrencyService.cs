@@ -1,4 +1,7 @@
 ﻿using Compago.Service.CustomeException;
+using Compago.Service.Settings;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Text;
 
 namespace Compago.Service
@@ -8,13 +11,18 @@ namespace Compago.Service
         Task<double> GetExchangeRateAsync(string fromCurrency, string toCurrency, DateTime date);
     }
 
-    public class CurrencyService() : ICurrencyService
+    public class CurrencyService(
+        ILogger<CurrencyService> logger,
+        IOptions<CurrencyServiceSettings.EX> settings) : ICurrencyService
     {
         public async Task<double> GetExchangeRateAsync(
             string fromCurrency, 
             string toCurrency, 
             DateTime date)
         {
+            logger.LogDebug("{message}", $"AUTH {settings.Value.APIKey}");
+            logger.LogDebug("{message}", $"GET {settings.Value.URL}/{fromCurrency}/{toCurrency}/{date:yyyy-MM-dd}");
+
             fromCurrency = fromCurrency.ToUpper();
             toCurrency = toCurrency.ToUpper();
 

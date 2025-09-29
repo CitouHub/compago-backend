@@ -14,7 +14,7 @@ namespace Compago.Test.Helper.Domain
             {
                 Id = id,
                 Price = price,
-                Date = date ?? DateTime.Now,
+                Date = date ?? DateTime.UtcNow,
                 ExchangeRate = exchangeRate,
             };
         }
