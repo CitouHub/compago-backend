@@ -1,0 +1,249 @@
+name: Code analysis
+
+env:
+  DOTNET_VERSION: '9.0'
+
+on:
+  push:
+    branches: 
+      - '**'
+  workflow_dispatch:
+
+jobs:
+  code_analysis:
+    name: Code analysis
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Restore Dependencies
+        run: dotnet restore
+
+      - name: Validate Build
+        run: dotnet build --configuration Release --no-restore 
+
+      - name: Upload build
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: ./
+
+  controller_tests:
+    name: Controller tests
+    needs: [code_analysis]
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Download build
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: ./
+
+      - name: Increas max_user_instances
+        run: echo fs.inotify.max_user_instances=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+
+      - name: Restore Dependencies
+        run: dotnet restore
+
+      - name: Setup .NET ${{ env.DOTNET_VERSION }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Run tests
+        run: |
+            dotnet test --configuration Release \
+            --no-build \
+            --verbosity normal \
+            --filter "FullyQualifiedName~Controller" \
+            -e Logging:LogLevel:Default=None \
+            -e Logging:LogLevel:Microsoft.AspNetCore=None \
+            --collect:"XPlat Code Coverage" \
+            --results-directory ./coverage
+
+      - name: Get test coverage file
+        id: get_test-coverage-file
+        run: | 
+            TEST_COVERAGE_FOLDER=$(find ./coverage -mindepth 1 -print -quit)
+            echo "test-coverage-folder=${TEST_COVERAGE_FOLDER:2}" >> $GITHUB_OUTPUT
+            TEST_COVERAGE_FILE=$(find $TEST_COVERAGE_FOLDER -mindepth 1 -print -quit)
+            echo "test-coverage-file=${TEST_COVERAGE_FILE:2}" >> $GITHUB_OUTPUT
+
+      - name: Upload test coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-coverage-controller
+          path: /home/runner/work/compago/compago/${{ steps.get_test-coverage-file.outputs.test-coverage-file }}
+          if-no-files-found: error
+
+  service_tests:
+    name: Service tests
+    needs: [code_analysis]
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Download build
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: ./
+
+      - name: Increas max_user_instances
+        run: echo fs.inotify.max_user_instances=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+
+      - name: Restore Dependencies
+        run: dotnet restore
+
+      - name: Setup .NET ${{ env.DOTNET_VERSION }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Run tests
+        run: |
+            dotnet test --configuration Release \
+            --no-build \
+            --verbosity normal \
+            --filter "FullyQualifiedName~Service" \
+            -e Logging:LogLevel:Default=None \
+            -e Logging:LogLevel:Microsoft.AspNetCore=None \
+            --collect:"XPlat Code Coverage" \
+            --results-directory ./coverage
+
+      - name: Get test coverage file
+        id: get-test-coverage-file
+        run: | 
+            TEST_COVERAGE_FOLDER=$(find ./coverage -mindepth 1 -print -quit)
+            echo "test-coverage-folder=${TEST_COVERAGE_FOLDER:2}" >> $GITHUB_OUTPUT
+            TEST_COVERAGE_FILE=$(find $TEST_COVERAGE_FOLDER -mindepth 1 -print -quit)
+            echo "test-coverage-file=${TEST_COVERAGE_FILE:2}" >> $GITHUB_OUTPUT
+
+      - name: Upload test coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-coverage-service
+          path: /home/runner/work/compago/compago/${{ steps.get-test-coverage-file.outputs.test-coverage-file }}
+          if-no-files-found: error
+
+  other_tests:
+    name: Other tests
+    needs: [code_analysis]
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Download build
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: ./
+
+      - name: Increas max_user_instances
+        run: echo fs.inotify.max_user_instances=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+
+      - name: Restore Dependencies
+        run: dotnet restore
+
+      - name: Setup .NET ${{ env.DOTNET_VERSION }}
+        uses: actions/setup-dotnet@v4
+        with:
+         dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Run tests
+        run: |
+            dotnet test --configuration Release \
+            --no-build \
+            --verbosity normal \
+            --filter "FullyQualifiedName!~Controller&FullyQualifiedName!~Service" \
+            -e Logging:LogLevel:Default=None \
+            -e Logging:LogLevel:Microsoft.AspNetCore=None \
+            --collect:"XPlat Code Coverage" \
+            --results-directory ./coverage
+
+      - name: Get test coverage file
+        id: get_test-coverage-file
+        run: | 
+            TEST_COVERAGE_FOLDER=$(find ./coverage -mindepth 1 -print -quit)
+            echo "test-coverage-folder=${TEST_COVERAGE_FOLDER:2}" >> $GITHUB_OUTPUT
+            TEST_COVERAGE_FILE=$(find $TEST_COVERAGE_FOLDER -mindepth 1 -print -quit)
+            echo "test-coverage-file=${TEST_COVERAGE_FILE:2}" >> $GITHUB_OUTPUT
+
+      - name: Upload test coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-coverage-other
+          path: /home/runner/work/compago/compago/${{ steps.get_test-coverage-file.outputs.test-coverage-file }}
+          if-no-files-found: error
+
+  code_coverage:
+    name: Validate test coverage
+    needs: [
+        backend_controller_tests,
+        backend_service_tests,
+        backend_other_tests
+    ]
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Download build
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: ./
+
+      - name: Download controller test coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: test-coverage-controller
+          path: ./controller/
+
+      - name: Download service test coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: test-coverage-service
+          path: ./service/
+
+      - name: Download other test coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: test-coverage-other
+          path: ./other/
+
+      - name: ReportGenerator
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.4.3
+        with:
+          reports: controller/coverage.cobertura.xml;service/coverage.cobertura.xml;other/coverage.cobertura.xml
+          targetdir: coveragereport
+          reporttypes: Html;Cobertura
+
+      - name: Upload test coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-coverage-report
+          path: coveragereport
+          if-no-files-found: error
+
+      - name: Validate code coverage
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        with:
+          filename: /**/Cobertura.xml
+          badge: true
+          fail_below_min: true
+          format: markdown
+          hide_branch_rate: false
+          hide_complexity: true
+          indicators: true
+          output: console
+          thresholds: '80 90'
+
+      - name: Delete artifacts
+        if: always()
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: |
+            build
+            test-coverage-controller
+            test-coverage-service
+            test-coverage-other

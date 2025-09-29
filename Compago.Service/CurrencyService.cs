@@ -25,7 +25,7 @@ namespace Compago.Service
                 // #############################
                 var cancellationTokenSource = new CancellationTokenSource();
                 var cancellationToken = cancellationTokenSource.Token;
-                var convertTask = new Task<double>(_ =>
+                var task = new Task<double>(_ =>
                 {
                     try
                     {
@@ -52,10 +52,10 @@ namespace Compago.Service
                         throw new ServiceException(ExceptionType.CurrencyServiceCallError, ex, $"{fromCurrency} => {toCurrency}");
                     }
                 }, null);
-                convertTask.Start();
-                await convertTask.WaitAsync(cancellationToken);
+                task.Start();
+                await task.WaitAsync(cancellationToken);
 
-                return convertTask.Result;
+                return task.Result;
             }
 
             return 1;

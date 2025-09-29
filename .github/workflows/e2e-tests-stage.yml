@@ -1,0 +1,18 @@
+name: End-2-end Staging tests
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["LMS v3 Staging release"]
+    types:
+      - completed
+
+jobs:
+  staging_e2e:
+    name: Staging
+    uses: Learning-Lions-2020/lms-v3/.github/workflows/e2e-tests.yml@develop
+    with:
+      base-url: https://lms-v3-stage-api.citou.se
+      environment: Staging
+    secrets:
+      e2e-key: "${{ secrets.END_2_END_STAGING_KEY }}"

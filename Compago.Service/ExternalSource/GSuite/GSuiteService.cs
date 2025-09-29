@@ -33,7 +33,7 @@ namespace Compago.Service.ExternalSource.GSuite
             // #############################
             var cancellationTokenSource = new CancellationTokenSource();
             var cancellationToken = cancellationTokenSource.Token;
-            var getTask = new Task<string>(_ =>
+            var task = new Task<string>(_ =>
             {
                 try
                 {
@@ -53,10 +53,10 @@ namespace Compago.Service.ExternalSource.GSuite
                     throw new ServiceException(ExceptionType.ExternalSourceCallError, ex);
                 }
             }, null);
-            getTask.Start();
-            await getTask.WaitAsync(cancellationToken);
+            task.Start();
+            await task.WaitAsync(cancellationToken);
 
-            var data = JsonConvert.DeserializeObject<Data>(getTask.Result);
+            var data = JsonConvert.DeserializeObject<Data>(task.Result);
             return data != null ? mapper.Map<BillingDTO>(data.FinancialInfo) : null;
         }
     }

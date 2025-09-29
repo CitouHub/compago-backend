@@ -1,0 +1,19 @@
+name: LMS v3 Staging release
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  release:
+    name: Staging
+    uses: Learning-Lions-2020/lms-v3/.github/workflows/release.yml@rikard
+    with:
+      azure-webapp-api-name: wa-lms-v3-staging-api
+      azure-static-webapp-ui-name: swa-lms-v3-staging
+      api-url: https://wa-lms-v3-staging-api.azurewebsites.net
+      version: ${{ github.sha }}
+    secrets:
+      azure-webapp-api-publish-profile: ${{ secrets.AZURE_WEBAPP_API_PUBLISH_PROFILE_STAGING }}
+      azure-static-web-app-ui-deployment-token: ${{ secrets.AZURE_STATIC_WEBAPP_UI_TOKEN_STAGING }}
