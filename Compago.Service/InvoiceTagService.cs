@@ -9,8 +9,8 @@ namespace Compago.Service
     public interface IInvoiceTagService
     {
         Task<InvoiceTagDTO> AddInvoiceTagAsync(InvoiceTagDTO invoiceTagDto);
-        Task<List<InvoiceTagDTO>> GetInvoiceTagsAsync(int tagId);
-        Task DeleteInvoiceTagAsync(InvoiceTagDTO invoiceTagDto);
+        Task<List<InvoiceTagDTO>?> GetInvoiceTagsAsync(int tagId);
+        Task DeleteInvoiceTagAsync(string invoiceId, short tagId);
     }
 
     public class InvoiceTagService(
@@ -34,8 +34,8 @@ namespace Compago.Service
                 else
                 {
                     throw new ServiceException(ExceptionType.ItemAlreadyExist, details: @$"{nameof(InvoiceTag)} with 
-                    {nameof(InvoiceTag.TagId)} = {invoiceTagDto.TagId} and 
-                    {nameof(InvoiceTag.InvoiceId)} = {invoiceTagDto.InvoiceId} already exists");
+                        {nameof(InvoiceTag.InvoiceId)} = {invoiceTagDto.InvoiceId} and
+                        {nameof(InvoiceTag.TagId)} = {invoiceTagDto.TagId} already exists");
                 }
             }
             else
@@ -45,9 +45,9 @@ namespace Compago.Service
             }
         }
 
-        public async Task DeleteInvoiceTagAsync(InvoiceTagDTO invoiceTagDto)
+        public async Task DeleteInvoiceTagAsync(string invoiceId, short tagId)
         {
-            var dbInvoiceTag = await dbContext.InvoiceTags.FirstOrDefaultAsync(_ => _.TagId == invoiceTagDto.TagId && _.InvoiceId == invoiceTagDto.InvoiceId);
+            var dbInvoiceTag = await dbContext.InvoiceTags.FirstOrDefaultAsync(_ => _.InvoiceId == invoiceId && _.TagId == tagId);
             if (dbInvoiceTag != null)
             {
                 dbContext.InvoiceTags.Remove(dbInvoiceTag);
@@ -56,15 +56,15 @@ namespace Compago.Service
             else
             {
                 throw new ServiceException(ExceptionType.ItemNotFound, details: @$"{nameof(InvoiceTag)} with 
-                    {nameof(InvoiceTag.TagId)} = {invoiceTagDto.TagId} and 
-                    {nameof(InvoiceTag.InvoiceId)} = {invoiceTagDto.InvoiceId} not found");
+                    {nameof(InvoiceTag.InvoiceId)} = {invoiceId} and
+                    {nameof(InvoiceTag.TagId)} = {tagId} not found");
             }
         }
 
-        public async Task<List<InvoiceTagDTO>> GetInvoiceTagsAsync(int tagId)
+        public async Task<List<InvoiceTagDTO>?> GetInvoiceTagsAsync(int tagId)
         {
             var invoiceTags = await dbContext.InvoiceTags.Where(_ => _.TagId == tagId).ToListAsync();
-            return mapper.Map<List<InvoiceTagDTO>>(invoiceTags);
+            return invoiceTags.Count != 0 ? mapper.Map<List<InvoiceTagDTO>>(invoiceTags) : null;
         }
     }
 }

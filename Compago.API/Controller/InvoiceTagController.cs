@@ -30,13 +30,13 @@ namespace Compago.API.Controller
             return Ok(await invoiceTagService.GetInvoiceTagsAsync(tagId));
         }
 
-        [HttpDelete("")]
-        public async Task<ActionResult<InvoiceTagDTO>> DeleteInvoiceTagAsync([FromBody] InvoiceTagDTO invoiceTagDto)
+        [HttpDelete("{invoiceId}/{tagId}")]
+        public async Task<ActionResult<InvoiceTagDTO>> DeleteInvoiceTagAsync(string invoiceId, short tagId)
         {
             logger.LogDebug("{message}", @$"Call to 
                 {nameof(ControllerContext.ActionDescriptor.ActionName)}");
 
-            await invoiceTagService.DeleteInvoiceTagAsync(invoiceTagDto);
+            await invoiceTagService.DeleteInvoiceTagAsync(invoiceId, tagId);
             return Ok();
         }
     }

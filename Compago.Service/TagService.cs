@@ -10,7 +10,7 @@ namespace Compago.Service
     public interface ITagService
     {
         Task<TagDTO> AddTagAsync(TagDTO tagDto);
-        Task<List<TagDTO>> GetTagsAsync();
+        Task<List<TagDTO>?> GetTagsAsync();
         Task<TagDTO> GetTagAsync(int tagId);
         Task<TagDTO> UpdateTagAsync(TagDTO tagDto);
         Task DeleteTagAsync(int tagId);
@@ -79,10 +79,10 @@ namespace Compago.Service
             }
         }
 
-        public async Task<List<TagDTO>> GetTagsAsync()
+        public async Task<List<TagDTO>?> GetTagsAsync()
         {
             var tags = await dbContext.Tags.Include(_ => _.InvoiceTags).ToListAsync();
-            return mapper.Map<List<TagDTO>>(tags);
+            return tags.Count != 0 ? mapper.Map<List<TagDTO>>(tags) : null;
         }
 
         public async Task<TagDTO> UpdateTagAsync(TagDTO tagDto)

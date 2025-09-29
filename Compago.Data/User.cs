@@ -15,7 +15,7 @@ public partial class User
 
     public int? UpdatedBy { get; set; }
 
-    public byte RoleId { get; set; }
+    public short RoleId { get; set; }
 
     public string Username { get; set; } = null!;
 

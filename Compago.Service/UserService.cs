@@ -9,7 +9,7 @@ namespace Compago.Service
     public interface IUserService
     {
         Task<UserDTO> AddUserAsync(UserDTO userDto);
-        Task<List<UserDTO>> GetUsersAsync();
+        Task<List<UserDTO>?> GetUsersAsync();
         Task<UserDTO> GetUserAsync(int userId);
         Task<UserDTO> UpdateUserAsync(UserDTO userDto);
         Task DeleteUserAsync(int userId);
@@ -76,10 +76,10 @@ namespace Compago.Service
             }
         }
 
-        public async Task<List<UserDTO>> GetUsersAsync()
+        public async Task<List<UserDTO>?> GetUsersAsync()
         {
             var users = await dbContext.Users.Include(_ => _.Role).ToListAsync();
-            return mapper.Map<List<UserDTO>>(users);
+            return users.Count != 0 ? mapper.Map<List<UserDTO>>(users) : null;
         }
 
         public async Task<UserDTO> UpdateUserAsync(UserDTO userDto)

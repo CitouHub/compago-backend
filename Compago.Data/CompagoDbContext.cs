@@ -42,7 +42,6 @@ public partial class CompagoDbContext : DbContext
 
             entity.ToTable("Role");
 
-            entity.Property(e => e.Id).ValueGeneratedOnAdd();
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getutcdate())");
             entity.Property(e => e.Name).HasMaxLength(100);
         });

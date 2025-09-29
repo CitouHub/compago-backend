@@ -5,7 +5,7 @@ namespace Compago.Data;
 
 public partial class Role
 {
-    public byte Id { get; set; }
+    public short Id { get; set; }
 
     public DateTime CreatedAt { get; set; }
 

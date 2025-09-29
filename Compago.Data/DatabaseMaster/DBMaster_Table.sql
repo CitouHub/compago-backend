@@ -10,7 +10,7 @@ IF OBJECTPROPERTY(object_id('dbo.Tag'), N'IsTable') = 1 DROP TABLE [dbo].[Tag]
 GO
 
 CREATE TABLE [dbo].[Role](
-	[Id] [tinyint] NOT NULL IDENTITY(1,1),
+	[Id] [smallint] NOT NULL IDENTITY(1,1),
 	[CreatedAt] [datetime2] NOT NULL DEFAULT(GETUTCDATE()),
 	[CreatedBy] [int] NOT NULL DEFAULT(0),
 	[UpdatedAt] [datetime2](7) NULL,
@@ -28,7 +28,7 @@ CREATE TABLE [dbo].[User](
 	[CreatedBy] [int] NOT NULL DEFAULT(0),
 	[UpdatedAt] [datetime2](7) NULL,
 	[UpdatedBy] [int] NULL,
-	[RoleId] [tinyint] NOT NULL,
+	[RoleId] [smallint] NOT NULL,
 	[Username] [nvarchar](100) NOT NULL,
 	[PasswordHash] [nvarchar](100) NOT NULL
  CONSTRAINT [User_PK] PRIMARY KEY CLUSTERED 

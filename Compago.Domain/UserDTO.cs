@@ -2,7 +2,7 @@
 
 public class UserDTO
 {
-    public int Id { get; set; }
+    public int? Id { get; set; }
 
     public int RoleId { get; set; }
 
@@ -10,5 +10,5 @@ public class UserDTO
 
     public string Username { get; set; } = null!;
 
-    public string PasswordHash { get; set; } = null!;
+    public string? Password { get; set; }
 }
