@@ -180,9 +180,9 @@ jobs:
   code_coverage:
     name: Validate test coverage
     needs: [
-        backend_controller_tests,
-        backend_service_tests,
-        backend_other_tests
+        controller_tests,
+        service_tests,
+        other_tests
     ]
     runs-on: ubuntu-24.04
 
