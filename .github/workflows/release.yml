@@ -6,6 +6,7 @@ env:
   API_NAME: wa-compago-api
   FUNCTION_PROJECT_NAME: Compago.Function
   FUNCTION_NAME: fa-compago
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'
 
 on:
   release:
@@ -107,26 +108,55 @@ jobs:
           name: ${{ env.FUNCTION_NAME }}
           path: ${{ env.DOTNET_ROOT }}/${{ env.FUNCTION_NAME }}
 
-  deploy_function:
-    name: Compago Function Deploy
-    runs-on: ubuntu-24.04
+  # deploy_function:
+  #   name: Compago Function Deploy
+  #   runs-on: ubuntu-24.04
+  #   needs: [build_function, deploy_api]
+
+  #   steps:
+  #     - name: Download build artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: ${{ env.FUNCTION_NAME }}
+
+  #     - name: Deploy to Azure Fuction App
+  #       uses: azure/webapps-deploy@v3
+  #       with:
+  #         app-name: ${{ env.FUNCTION_NAME }}
+  #         publish-profile: ${{ secrets.AZURE_COMPAGO_FUNCTION_PUBLISH_PROFILE }}
+  #         package: .
+
+  #     - name: Delete build artifact
+  #       if: always()
+  #       uses: geekyeggo/delete-artifact@v5
+  #       with:
+  #           name: ${{ env.FUNCTION_NAME }}
+
+  build-and-deploy:
+    runs-on: windows-latest
     needs: [build_function, deploy_api]
-
+    
     steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ env.FUNCTION_NAME }}
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v4
 
-      - name: Deploy to Azure Fuction App
-        uses: azure/webapps-deploy@v3
+      - name: Setup DotNet ${{ env.DOTNET_VERSION }} Environment
+        uses: actions/setup-dotnet@v1
         with:
-          app-name: ${{ env.FUNCTION_NAME }}
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: 'Resolve Project Dependencies Using Dotnet'
+        shell: pwsh
+        run: |
+          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          dotnet build --configuration Release --output ./output
+          popd
+      
+      - name: 'Run Azure Functions Action'
+        uses: Azure/functions-action@v1
+        id: fa
+        with:
+          app-name: 'fa-compago'
+          slot-name: 'Production'
+          package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
           publish-profile: ${{ secrets.AZURE_COMPAGO_FUNCTION_PUBLISH_PROFILE }}
-          package: .
-
-      - name: Delete build artifact
-        if: always()
-        uses: geekyeggo/delete-artifact@v5
-        with:
-            name: ${{ env.FUNCTION_NAME }}     
