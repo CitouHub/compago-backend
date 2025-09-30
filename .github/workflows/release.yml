@@ -1,4 +1,4 @@
-name: LMS v3 release
+name: Compago release
 
 env:
   DOTNET_VERSION: '9'

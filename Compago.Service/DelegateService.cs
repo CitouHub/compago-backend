@@ -40,7 +40,7 @@ namespace Compago.Service
                 _ => throw new ServiceException(ExceptionType.ExternalSourceNotSupported)
             };
 
-            if (billing != null && String.IsNullOrEmpty(currency?.Trim()) == false)
+            if (billing != null && currency != null && currency.Replace(" ", "").Length > 0)
             {
                 billing.Invoices.ForEach(async _ => await UpdateInvoiceAsync(_, billing.Currency, currency));
                 billing.Currency = currency;
