@@ -2,7 +2,7 @@ name: Compago release
 
 env:
   DOTNET_VERSION: '9'
-  DOTNET_VERSION2: '9.0.9'
+  DOTNET_VERSION2: '9.0.0'
   API_PROJECT_NAME: Compago.API
   API_NAME: wa-compago-api
   FUNCTION_PROJECT_NAME: Compago.Function
@@ -76,7 +76,7 @@ jobs:
 
   build_function:
     name: Compago Function Build
-    runs-on: ubuntu-24.04
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -111,7 +111,7 @@ jobs:
 
   # deploy_function:
   #   name: Compago Function Deploy
-  #   runs-on: ubuntu-24.04
+  #   runs-on: windows-latest
   #   needs: [build_function, deploy_api]
 
   #   steps:
@@ -141,7 +141,7 @@ jobs:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v4
 
-      - name: Setup DotNet ${{ env.DOTNET_VERSION }} Environment
+      - name: Setup DotNet ${{ env.DOTNET_VERSION2 }} Environment
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: ${{ env.DOTNET_VERSION2 }}
