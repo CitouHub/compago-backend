@@ -1,8 +1,7 @@
 name: LMS v3 Production release
 
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
 
 jobs:
   release:
