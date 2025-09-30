@@ -6,7 +6,6 @@ env:
   API_NAME: wa-compago-api
   FUNCTION_PROJECT_NAME: Compago.Function
   FUNCTION_NAME: fa-compago
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'
 
 on:
   release:
@@ -75,7 +74,7 @@ jobs:
 
   build_function:
     name: Compago Function Build
-    runs-on: windows-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - uses: actions/checkout@v4
@@ -100,17 +99,17 @@ jobs:
         run: dotnet build ${{env.FUNCTION_PROJECT_NAME}} --configuration Release
 
       - name: Publish with dotnet
-        run: dotnet publish --configuration Release --property:PublishDir=${{ env.DOTNET_ROOT }}\${{ env.FUNCTION_NAME }}
+        run: dotnet publish --configuration Release --property:PublishDir=${{ env.DOTNET_ROOT }}/${{ env.FUNCTION_NAME }}
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.FUNCTION_NAME }}
-          path: ${{ env.DOTNET_ROOT }}\${{ env.FUNCTION_NAME }}
+          path: ${{ env.DOTNET_ROOT }}/${{ env.FUNCTION_NAME }}
 
   deploy_function:
     name: Compago Function Deploy
-    runs-on: windows-latest
+    runs-on: ubuntu-24.04
     needs: [build_function, deploy_api]
 
     steps:
