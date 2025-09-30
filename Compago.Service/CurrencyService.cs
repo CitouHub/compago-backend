@@ -63,7 +63,7 @@ namespace Compago.Service
                 task.Start();
                 await task.WaitAsync(cancellationToken);
 
-                return exchangeRate;
+                return task.Result;
             }
 
             return 1;
