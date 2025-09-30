@@ -42,18 +42,17 @@ namespace Compago.Service
 
             if (billing != null && currency != null && currency.Replace(" ", "").Length > 0)
             {
-                billing.Invoices.ForEach(async _ => await UpdateInvoiceAsync(_, billing.Currency, currency));
+                foreach (var invoice in billing.Invoices)
+                {
+                    var exchangeRate = await currencyService.GetExchangeRateAsync(billing.Currency, currency, invoice.Date);
+                    invoice.Price = Math.Round(invoice.Price * exchangeRate, 2);
+                    invoice.ExchangeRate = exchangeRate;
+                }
+                
                 billing.Currency = currency;
             }
 
             return billing;
-        }
-
-        private async Task UpdateInvoiceAsync(InvoiceDTO invoice, string currentCurrency, string requestedCurrency)
-        {
-            var exchangeRate = await currencyService.GetExchangeRateAsync(currentCurrency, requestedCurrency, invoice.Date);
-            invoice.Price = Math.Round(invoice.Price * exchangeRate, 2);
-            invoice.ExchangeRate = exchangeRate;
         }
     }
 }
