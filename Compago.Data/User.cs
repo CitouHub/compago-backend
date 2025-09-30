@@ -21,5 +21,7 @@ public partial class User
 
     public string PasswordHash { get; set; } = null!;
 
+    public string PasswordHashSalt { get; set; } = null!;
+
     public virtual Role Role { get; set; } = null!;
 }

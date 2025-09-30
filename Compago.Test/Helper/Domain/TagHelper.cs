@@ -8,7 +8,7 @@ namespace Compago.Test.Helper.Domain
         public static TagDTO New(
             short? id = 1,
             string name = "TestTag",
-            string color = "#000000")
+            string? color = "#000000")
         {
             return new TagDTO()
             {
@@ -18,7 +18,7 @@ namespace Compago.Test.Helper.Domain
             };
         }
 
-        public static Tag NewDB(
+        public static Tag NewDb(
             short id = 1,
             string name = "TestTag",
             string color = "#000000")

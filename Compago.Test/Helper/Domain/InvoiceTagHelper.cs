@@ -6,24 +6,24 @@ namespace Compago.Test.Helper.Domain
     public static class InvoiceTagHelper
     {
         public static InvoiceTagDTO New(
-            short tagId = 1,
-            string invoiceId = "TestInvoiceId")
+            string invoiceId = "TestInvoiceId",
+            short tagId = 1)
         {
             return new InvoiceTagDTO()
             {
-                TagId = tagId,
-                InvoiceId = invoiceId
+                InvoiceId = invoiceId,
+                TagId = tagId
             };
         }
 
-        public static InvoiceTag NewDB(
-            short tagId = 1,
-            string invoiceId = "TestInvoiceId")
+        public static InvoiceTag NewDb(
+            string invoiceId = "TestInvoiceId",
+            short tagId = 1)
         {
             return new InvoiceTag()
             {
-                TagId = tagId,
-                InvoiceId = invoiceId
+                InvoiceId = invoiceId,
+                TagId = tagId
             };
         }
     }

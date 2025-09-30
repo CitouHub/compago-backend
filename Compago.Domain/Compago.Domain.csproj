@@ -10,4 +10,9 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Compago.Common\Compago.Common.csproj" />
+    <ProjectReference Include="..\Compago.Data\Compago.Data.csproj" />
+  </ItemGroup>
+
 </Project>

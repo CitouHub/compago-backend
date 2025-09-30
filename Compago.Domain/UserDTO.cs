@@ -1,10 +1,12 @@
-﻿namespace Compago.Domain;
+﻿using Compago.Common;
+
+namespace Compago.Domain;
 
 public class UserDTO
 {
     public int? Id { get; set; }
 
-    public int RoleId { get; set; }
+    public Role RoleId { get; set; }
 
     public string? RoleName { get; set; }
 

@@ -30,7 +30,8 @@ CREATE TABLE [dbo].[User](
 	[UpdatedBy] [int] NULL,
 	[RoleId] [smallint] NOT NULL,
 	[Username] [nvarchar](100) NOT NULL,
-	[PasswordHash] [nvarchar](100) NOT NULL
+	[PasswordHash] [nvarchar](100) NOT NULL,
+	[PasswordHashSalt] [nvarchar](100) NOT NULL
  CONSTRAINT [User_PK] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -78,6 +79,6 @@ GO
 
 SET IDENTITY_INSERT [User] ON
 GO
-INSERT INTO [User]([Id], [RoleId], [Username], [PasswordHash]) VALUES (1, 1, 'admin@citou.se', 'XXXXXXXXXXXXX')
+INSERT INTO [User]([Id], [RoleId], [Username], [PasswordHash], [PasswordHashSalt]) VALUES (1, 1, 'admin@citou.se', 'zCjCUaEMdHUKVFTh+c6p7/hkwVgoRiBCU5ZeIfZrj88=', 'GR3BmFPzSZtEwQZF268Atw==')
 SET IDENTITY_INSERT [User] OFF
 GO

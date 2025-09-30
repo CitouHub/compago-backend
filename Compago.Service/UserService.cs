@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Compago.Common;
 using Compago.Data;
 using Compago.Domain;
 using Compago.Service.CustomeException;
@@ -21,13 +22,17 @@ namespace Compago.Service
     {
         public async Task<UserDTO> AddUserAsync(UserDTO userDto)
         {
-            var userExists = await dbContext.Users.AnyAsync(_ => _.Username == userDto.Username);
-            if (userExists == false)
+            if (userDto.Password != null)
             {
-                var roleExists = await dbContext.Roles.AnyAsync(_ => _.Id == userDto.RoleId);
-                if (roleExists == true)
+                var userExists = await dbContext.Users.AnyAsync(_ => _.Username == userDto.Username);
+                if (userExists == false)
                 {
                     var dbUser = mapper.Map<User>(userDto);
+
+                    var (hash, salt) = PasswordHandler.HashPassword(userDto.Password);
+                    dbUser.PasswordHash = hash;
+                    dbUser.PasswordHashSalt = salt;
+
                     await dbContext.Users.AddAsync(dbUser);
                     await dbContext.SaveChangesAsync();
 
@@ -36,14 +41,13 @@ namespace Compago.Service
                 }
                 else
                 {
-                    throw new ServiceException(ExceptionType.ItemNotFound, details: @$"{nameof(Role)} with 
-                        {nameof(Role.Id)} = {userDto.RoleId} not found");
+                    throw new ServiceException(ExceptionType.ItemAlreadyExist, details: @$"{nameof(User)} with 
+                    {nameof(User.Username)} = {userDto.Username} already exists");
                 }
-            } 
+            }
             else
             {
-                throw new ServiceException(ExceptionType.ItemAlreadyExist, details: @$"{nameof(User)} with 
-                    {nameof(User.Username)} = {userDto.Username} already exists");
+                throw new ServiceException(ExceptionType.InvalidRequest, details: @$"{nameof(User)} is missing {nameof(UserDTO.Password)}");
             }
         }
 
@@ -90,20 +94,11 @@ namespace Compago.Service
                 var otherUserExists = await dbContext.Users.AnyAsync(_ => _.Username == userDto.Username && _.Id != userDto.Id);
                 if (otherUserExists == false)
                 {
-                    var roleExists = await dbContext.Roles.AnyAsync(_ => _.Id == userDto.RoleId);
-                    if (roleExists == true)
-                    {
-                        mapper.Map(userDto, dbUser);
-                        await dbContext.SaveChangesAsync();
+                    mapper.Map(userDto, dbUser);
+                    await dbContext.SaveChangesAsync();
 
-                        dbUser = await dbContext.Users.Include(_ => _.Role).FirstOrDefaultAsync(_ => _.Id == dbUser.Id);
-                        return mapper.Map<UserDTO>(dbUser);
-                    }
-                    else
-                    {
-                        throw new ServiceException(ExceptionType.ItemNotFound, details: @$"{nameof(Role)} with 
-                            {nameof(Role.Id)} = {userDto.RoleId} not found");
-                    }
+                    dbUser = await dbContext.Users.Include(_ => _.Role).FirstOrDefaultAsync(_ => _.Id == dbUser.Id);
+                    return mapper.Map<UserDTO>(dbUser);
                 }
                 else
                 {

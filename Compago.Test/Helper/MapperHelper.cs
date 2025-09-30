@@ -16,6 +16,7 @@ namespace Compago.Test.Helper
             {
                 config.AddProfiles([
                     new GSuiteProfile(),
+                    new InternalProfile(),
                     new MicrosoftAzureProfile()
                 ]);
             }, logger);

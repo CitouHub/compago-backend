@@ -67,6 +67,7 @@ public partial class CompagoDbContext : DbContext
 
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getutcdate())");
             entity.Property(e => e.PasswordHash).HasMaxLength(100);
+            entity.Property(e => e.PasswordHashSalt).HasMaxLength(100);
             entity.Property(e => e.Username).HasMaxLength(100);
 
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
