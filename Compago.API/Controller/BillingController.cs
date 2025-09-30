@@ -26,7 +26,7 @@ namespace Compago.API.Controller
                 {fromDate:yyyy-MM-dd}, 
                 {toDate:yyyy-MM-dd}, 
                 {currency}");
-            return await delegateService.GetBillingAsync(supportedExternalSource, fromDate, toDate, "TEST");
+            return await delegateService.GetBillingAsync(supportedExternalSource, fromDate, toDate, currency);
         }
     }
 }
