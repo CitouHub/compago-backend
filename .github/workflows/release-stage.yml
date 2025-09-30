@@ -1,14 +1,13 @@
-name: LMS v3 Staging release
+name: Compago Staging release
 
 on:
-  push:
-    branches:
-      - develop
+  release:
+    types: [published]
 
 jobs:
   release:
     name: Staging
-    uses: Learning-Lions-2020/lms-v3/.github/workflows/release.yml@rikard
+    uses: CitouHub/compago-backend/.github/workflows/release.yml
     with:
       azure-webapp-api-name: wa-lms-v3-staging-api
       azure-static-webapp-ui-name: swa-lms-v3-staging

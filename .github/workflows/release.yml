@@ -1,35 +1,20 @@
 name: LMS v3 release
 
+env:
+  DOTNET_VERSION: '9'
+  API_PROJECT_NAME: Compago.API
+  API_NAME: wa-compago-api
+  FUNCTION_PROJECT_NAME: Compago.Function
+  FUNCTION_NAME: func-compago
+
 on:
-  workflow_call:
-    inputs:
-      azure-webapp-api-name:
-        required: true
-        type: string
-      azure-static-webapp-ui-name:
-        required: true
-        type: string
-      api-url:
-        required: true
-        type: string
-      version:
-        required: true
-        type: string
-    secrets:
-      azure-webapp-api-publish-profile:
-        required: true
-      azure-static-web-app-ui-deployment-token:
-        required: true
+  release:
+    types: [published]
 
 jobs:
   build_api:
-    name: LMS v3 API Build
+    name: Compago API Build
     runs-on: ubuntu-24.04
-    env:
-      DOTNET_VERSION: '8'
-    defaults:
-      run:
-        working-directory: ./backend
 
     steps:
       - uses: actions/checkout@v4
@@ -38,9 +23,6 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-
-      - name: Set version to ${{ inputs.version }}
-        run: echo "`jq '.Version="${{ inputs.version }}"' LMS.v3.API/appsettings.json`" > LMS.v3.API/appsettings.json
 
       - name: Set up dependency caching for faster builds
         uses: actions/cache@v4
@@ -51,22 +33,22 @@ jobs:
             ${{ runner.os }}-nuget-
 
       - name: Exclude test projects
-        run: dotnet sln remove LMS.v3.Test/LMS.v3.Test.csproj
+        run: dotnet sln remove Compago.Test/Compago.Test.csproj
 
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
+      - name: Build ${{env.APP_PROJECT_NAME}}
+        run: dotnet build ${{env.API_PROJECT_NAME}} --configuration Release
 
       - name: Publish with dotnet
-        run: dotnet publish --configuration Release --property:PublishDir=${{ env.DOTNET_ROOT }}/${{ inputs.azure-webapp-api-name }}
+        run: dotnet publish --configuration Release --property:PublishDir=${{ env.DOTNET_ROOT }}/${{ env.API_NAME }}
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ inputs.azure-webapp-api-name }}
-          path: ${{ env.DOTNET_ROOT }}/${{ inputs.azure-webapp-api-name }}
+          name: ${{ env.API_NAME }}
+          path: ${{ env.DOTNET_ROOT }}/${{ API_NAME }}
 
   deploy_api:
-    name: LMS v3 API Deploy
+    name: Compago API Deploy
     runs-on: ubuntu-24.04
     needs: build_api
 
@@ -74,77 +56,18 @@ jobs:
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
-          name: ${{ inputs.azure-webapp-api-name }}
+          name: ${{ env.API_NAME }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: ${{ inputs.azure-webapp-api-name }}
-          publish-profile: ${{ secrets.azure-webapp-api-publish-profile }}
+          app-name: ${{ env.API_NAME }}
+          publish-profile: ${{ secrets.AZURE_COMPAGO_API_PUBLISH_PROFILE }}
           package: .
 
       - name: Delete build artifact
         if: always()
         uses: geekyeggo/delete-artifact@v5
         with:
-            name: ${{ inputs.azure-webapp-api-name }}
-
-  build_frontend:
-    name: LMS v3 UI Build
-    runs-on: windows-2022
-    env:
-      NODE_VERSION: '20'
-    defaults:
-      run:
-        working-directory: ./frontend
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-  
-      - name: Set up Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build
-        run: npm run build
-        env:
-          REACT_APP_LMS_API_URL: ${{ inputs.api-url }}
-          REACT_APP_GOOGLE_CLIENT_ID: 447222439767-vshiqf3bhobq91ivkuusks0bm9i0l99d.apps.googleusercontent.com
-
-      - name: Include static web site config
-        run: move staticwebapp.config.json build
-
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ inputs.azure-static-webapp-ui-name }}
-          path: frontend/build
-
-  deploy_frontend:
-    name: LMS v3 UI Deploy
-    runs-on: ubuntu-24.04
-    needs: build_frontend
-
-    steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ inputs.azure-static-webapp-ui-name }}
-
-      - name: Deploy to Azure Static Web App
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.azure-static-web-app-ui-deployment-token }}
-          action: "upload"
-
-      - name: Delete build artifact
-        if: always()
-        uses: geekyeggo/delete-artifact@v5
-        with:
-            name: ${{ inputs.azure-static-webapp-ui-name }}
+            name: ${{ inputs.API_NAME }}      
