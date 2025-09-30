@@ -32,8 +32,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuget-
 
-      - name: Exclude test projects
+      - name: Exclude Compago.Test project
         run: dotnet sln remove Compago.Test/Compago.Test.csproj
+
+      - name: Exclude Compago.Function project
+        run: dotnet sln remove Compago.Function/Compago.Function.csproj
 
       - name: Build ${{env.APP_PROJECT_NAME}}
         run: dotnet build ${{env.API_PROJECT_NAME}} --configuration Release
@@ -92,8 +95,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuget-
 
-      - name: Exclude test projects
+      - name: Exclude Compago.Test project
         run: dotnet sln remove Compago.Test/Compago.Test.csproj
+
+      - name: Exclude Compago.API project
+        run: dotnet sln remove Compago.API/Compago.API.csproj
 
       - name: Build ${{env.FUNCTION_PROJECT_NAME}}
         run: dotnet build ${{env.FUNCTION_PROJECT_NAME}} --configuration Release
