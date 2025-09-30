@@ -27,5 +27,29 @@ namespace Compago.Test.Domain
             // Assert
             Assert.Null(billing.Currency);
         }
+
+        [Fact]
+        public static void OriginalCurrencyUpperCase()
+        {
+            // Arrange
+            var currency = "smallCaps";
+
+            // Act
+            var billing = BillingHelper.New(originalCurrency: currency);
+
+            // Assert
+            Assert.Equal(currency.ToUpper(), billing.OrigialCurrency);
+        }
+
+        [Fact]
+        public static void OriginalCurrencyNull()
+        {
+            // Arrange
+            var billing = BillingHelper.New();
+            billing.OrigialCurrency = null!;
+
+            // Assert
+            Assert.Null(billing.OrigialCurrency);
+        }
     }
 }

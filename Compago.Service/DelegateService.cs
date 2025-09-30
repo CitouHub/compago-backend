@@ -48,7 +48,8 @@ namespace Compago.Service
                     invoice.Price = Math.Round(invoice.Price * exchangeRate, 2);
                     invoice.ExchangeRate = exchangeRate;
                 }
-                
+
+                billing.OrigialCurrency = billing.Currency;
                 billing.Currency = currency;
             }
 

@@ -128,6 +128,7 @@ namespace Compago.Test.Service
                     // Assert
                     Assert.NotNull(result);
                     Assert.Equal(toCurrency.ToUpper(), result.Currency);
+                    Assert.Equal(fromCurrency.ToUpper(), result.OrigialCurrency);
                     Assert.Equal(billing.Invoices.Count, result.Invoices.Count);
                     Assert.Equal(price1 * exchangeRate1, result.Invoices.First(_ => _.Id == invoice1.Id).Price);
                     Assert.Equal(price2 * exchangeRate2, result.Invoices.First(_ => _.Id == invoice2.Id).Price);
@@ -254,6 +255,7 @@ namespace Compago.Test.Service
                     // Assert
                     Assert.NotNull(result);
                     Assert.Equal(toCurrency.ToUpper(), result.Currency);
+                    Assert.Equal(fromCurrency.ToUpper(), result.OrigialCurrency);
                     Assert.Equal(billing.Invoices.Count, result.Invoices.Count);
                     Assert.Equal(price1 * exchangeRate1, result.Invoices.First(_ => _.Id == invoice1.Id).Price);
                     Assert.Equal(price2 * exchangeRate2, result.Invoices.First(_ => _.Id == invoice2.Id).Price);

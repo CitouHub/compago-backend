@@ -4,11 +4,12 @@ namespace Compago.Test.Helper.Domain
 {
     public static class BillingHelper
     {
-        public static BillingDTO New(string currency = "SEK")
+        public static BillingDTO New(string currency = "SEK", string originalCurrency = "SEK")
         {
             return new BillingDTO()
             {
-                Currency = currency
+                Currency = currency,
+                OrigialCurrency = originalCurrency,
             };
         }
     }
