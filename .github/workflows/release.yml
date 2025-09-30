@@ -45,7 +45,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.API_NAME }}
-          path: ${{ env.DOTNET_ROOT }}/${{ API_NAME }}
+          path: ${{ env.DOTNET_ROOT }}/${{ env.API_NAME }}
 
   deploy_api:
     name: Compago API Deploy
@@ -70,4 +70,4 @@ jobs:
         if: always()
         uses: geekyeggo/delete-artifact@v5
         with:
-            name: ${{ inputs.API_NAME }}      
+            name: ${{ env.API_NAME }}      
