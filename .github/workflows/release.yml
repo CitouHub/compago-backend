@@ -71,3 +71,62 @@ jobs:
         uses: geekyeggo/delete-artifact@v5
         with:
             name: ${{ env.API_NAME }}      
+
+  build_function:
+    name: Compago Function Build
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET ${{ env.DOTNET_VERSION }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Set up dependency caching for faster builds
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Exclude test projects
+        run: dotnet sln remove Compago.Test/Compago.Test.csproj
+
+      - name: Build ${{env.FUNCTION_PROJECT_NAME}}
+        run: dotnet build ${{env.FUNCTION_PROJECT_NAME}} --configuration Release
+
+      - name: Publish with dotnet
+        run: dotnet publish --configuration Release --property:PublishDir=${{ env.DOTNET_ROOT }}/${{ env.FUNCTION_NAME }}
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.FUNCTION_NAME }}
+          path: ${{ env.DOTNET_ROOT }}/${{ env.FUNCTION_NAME }}
+
+  deploy_function:
+    name: Compago Function Deploy
+    runs-on: ubuntu-24.04
+    needs: build_function
+
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.FUNCTION_NAME }}
+
+      - name: Deploy to Azure Fuction App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.FUNCTION_NAME }}
+          publish-profile: ${{ secrets.AZURE_COMPAGO_FUNCTION_PUBLISH_PROFILE }}
+          package: .
+
+      - name: Delete build artifact
+        if: always()
+        uses: geekyeggo/delete-artifact@v5
+        with:
+            name: ${{ env.FUNCTION_NAME }}     
