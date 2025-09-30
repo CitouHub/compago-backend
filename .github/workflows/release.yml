@@ -110,7 +110,7 @@ jobs:
   deploy_function:
     name: Compago Function Deploy
     runs-on: ubuntu-24.04
-    needs: [build_function, build_api]
+    needs: [build_function, deploy_api]
 
     steps:
       - name: Download build artifact
