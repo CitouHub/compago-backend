@@ -2,6 +2,7 @@ name: Compago release
 
 env:
   DOTNET_VERSION: '9'
+  DOTNET_VERSION2: '9.0.9'
   API_PROJECT_NAME: Compago.API
   API_NAME: wa-compago-api
   FUNCTION_PROJECT_NAME: Compago.Function
@@ -143,7 +144,7 @@ jobs:
       - name: Setup DotNet ${{ env.DOTNET_VERSION }} Environment
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
+          dotnet-version: ${{ env.DOTNET_VERSION2 }}
 
       - name: 'Resolve Project Dependencies Using Dotnet'
         shell: pwsh
