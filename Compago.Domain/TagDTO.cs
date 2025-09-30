@@ -1,4 +1,6 @@
-﻿namespace Compago.Domain;
+﻿using Compago.Data;
+
+namespace Compago.Domain;
 
 public class TagDTO
 {
@@ -7,4 +9,6 @@ public class TagDTO
     public string Name { get; set; } = null!;
 
     public string? Color { get; set; } = null!;
+
+    public List<InvoiceTag> InvoiceTags { get; set; } = [];
 }
