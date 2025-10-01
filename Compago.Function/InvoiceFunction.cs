@@ -11,7 +11,7 @@ namespace Compago.Function
         ILogger<InvoiceFunction> logger,
         IDelegateService delegateService)
     {
-        [Function("BillingGSuite2")]
+        [Function("BillingGSuite")]
         public async Task<IActionResult> RunBillingGSuite([HttpTrigger(AuthorizationLevel.Function, "get", Route = "billing/gsuite/{fromDate}/{toDate}")] HttpRequest _,
             DateTime fromDate,
             DateTime toDate,
@@ -27,7 +27,7 @@ namespace Compago.Function
             return new OkObjectResult(billing);
         }
 
-        [Function("BillingMicrosoftAzure2")]
+        [Function("BillingMicrosoftAzure")]
         public async Task<IActionResult> RunBillingMicrosoftAzure([HttpTrigger(AuthorizationLevel.Function, "get", Route = "billing/microsoftazure/{fromDate}/{toDate}")] HttpRequest _,
             DateTime fromDate,
             DateTime toDate,
@@ -41,24 +41,6 @@ namespace Compago.Function
 
             var billing = await delegateService.GetBillingAsync(SupportedExternalSource.MicrosoftAzure, fromDate, toDate, currency);
             return new OkObjectResult(billing);
-        }
-
-        [Function("Function1")]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "like/this/{fromDate}")] HttpRequest req, DateTime fromDate)
-        {
-            try
-            {
-                logger.LogDebug("{message}", @$"HTTP Function call to 
-            {SupportedExternalSource.MicrosoftAzure}, 
-            {fromDate:yyyy-MM-dd}");
-
-                var billing = await delegateService.GetBillingAsync(SupportedExternalSource.MicrosoftAzure, fromDate, fromDate);
-                return new OkObjectResult($"Welcome to Azure Functions! {fromDate:yyyy-MM-dd}");
-            } 
-            catch (Exception ex)
-            {
-                return new OkObjectResult(ex);
-            }
         }
     }
 }
