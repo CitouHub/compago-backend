@@ -1,7 +1,8 @@
 name: Compago release
 
 env:
-  DOTNET_VERSION: '9.0.x'
+  DOTNET_VERSION_GENERAL: '9'
+  DOTNET_VERSION_SPECIFIC: '9.0.x'
   API_PROJECT_NAME: Compago.API
   API_NAME: wa-compago-api
   FUNCTION_PROJECT_NAME: Compago.Function
@@ -19,10 +20,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up .NET ${{ env.DOTNET_VERSION }}
+      - name: Set up .NET ${{ env.DOTNET_VERSION_GENERAL }}
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
+          dotnet-version: ${{ env.DOTNET_VERSION_GENERAL }}
 
       - name: Set up dependency caching for faster builds
         uses: actions/cache@v4
@@ -153,10 +154,10 @@ jobs:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v4
 
-      - name: Setup DotNet ${{ env.DOTNET_VERSION }} Environment
+      - name: Setup DotNet ${{ env.DOTNET_VERSION_SPECIFIC }} Environment
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
+          dotnet-version: ${{ env.DOTNET_VERSION_SPECIFIC }}
 
       - name: 'Resolve Project Dependencies Using Dotnet'
         shell: pwsh
