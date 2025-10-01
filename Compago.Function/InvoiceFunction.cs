@@ -11,7 +11,7 @@ namespace Compago.Function
         ILogger<InvoiceFunction> logger,
         IDelegateService delegateService)
     {
-        [Function("BillingGSuite")]
+        [Function("BillingGSuite2")]
         public async Task<IActionResult> RunBillingGSuite([HttpTrigger(AuthorizationLevel.Function, "get", Route = "billing/gsuite/{fromDate}/{toDate}")] HttpRequest _,
             DateTime fromDate,
             DateTime toDate,
@@ -27,7 +27,7 @@ namespace Compago.Function
             return new OkObjectResult(billing);
         }
 
-        [Function("BillingMicrosoftAzure")]
+        [Function("BillingMicrosoftAzure2")]
         public async Task<IActionResult> RunBillingMicrosoftAzure([HttpTrigger(AuthorizationLevel.Function, "get", Route = "billing/microsoftazure/{fromDate}/{toDate}")] HttpRequest _,
             DateTime fromDate,
             DateTime toDate,
