@@ -76,84 +76,16 @@ jobs:
         with:
             name: ${{ env.API_NAME }}      
 
-  # build_function:
-  #   name: Compago Function Build
-  #   runs-on: ubuntu-24.04
-
-  #   steps:
-  #     - uses: actions/checkout@v4
-
-  #     - name: Set up .NET ${{ env.DOTNET_VERSION }}
-  #       uses: actions/setup-dotnet@v4
-  #       with:
-  #         dotnet-version: ${{ env.DOTNET_VERSION }}
-
-  #     - name: Set up dependency caching for faster builds
-  #       uses: actions/cache@v4
-  #       with:
-  #         path: ~/.nuget/packages
-  #         key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-nuget-
-
-  #     - name: Exclude Compago.Test project
-  #       run: dotnet sln remove Compago.Test/Compago.Test.csproj
-
-  #     - name: Exclude Compago.API project
-  #       run: dotnet sln remove Compago.API/Compago.API.csproj
-
-  #     - name: Build ${{env.FUNCTION_PROJECT_NAME}}
-  #       run: dotnet build ${{env.FUNCTION_PROJECT_NAME}} --configuration Release
-
-  #     - name: Publish with dotnet
-  #       run: dotnet publish --configuration Release --property:PublishDir=${{ env.DOTNET_ROOT }}/${{ env.FUNCTION_NAME }}
-
-  #     - name: Upload build artifact
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: ${{ env.FUNCTION_NAME }}
-  #         path: ${{ env.DOTNET_ROOT }}/${{ env.FUNCTION_NAME }}
-
-  # deploy_function:
-  #   name: Compago Function Deploy
-  #   runs-on: ubuntu-24.04
-  #   needs: [build_function, deploy_api]
-
-  #   steps:
-  #     - name: Download build artifact
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: ${{ env.FUNCTION_NAME }}
-
-  #     - name: Deploy to Azure Fuction App
-  #       uses: azure/webapps-deploy@v3
-  #       with:
-  #         app-name: ${{ env.FUNCTION_NAME }}
-  #         publish-profile: ${{ secrets.AZURE_COMPAGO_FUNCTION_PUBLISH_PROFILE }}
-  #         package: .
-
-  #     - name: 'Run the Azure Functions action'
-  #       uses: Azure/functions-action@v1
-  #       id: deploy-to-function-app
-  #       with:
-  #         app-name: ${{ env.FUNCTION_NAME }}
-  #         package: .
-  #         publish-profile: ${{ secrets.AZURE_COMPAGO_FUNCTION_PUBLISH_PROFILE }}
-
-  #     - name: Delete build artifact
-  #       if: always()
-  #       uses: geekyeggo/delete-artifact@v5
-  #       with:
-  #           name: ${{ env.FUNCTION_NAME }}
-
-  build_function:
+  build_deploy_function:
+    name: Compago Function Build/Deploy
     runs-on: windows-latest
-
+    needs: [deploy_api]
+    
     steps:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v4
 
-      - name: Setup DotNet ${{ env.DOTNET_VERSION }} Environment
+      - name: Setup .Net ${{ env.DOTNET_VERSION }}
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
@@ -162,24 +94,8 @@ jobs:
         shell: pwsh
         run: |
           pushd './${{ env.FUNCTION_PROJECT_NAME }}'
-          dotnet build --configuration Release --output ${{ env.DOTNET_ROOT }}/${{ env.FUNCTION_NAME }}
+          dotnet build --configuration Release --output ./output
           popd
-
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.FUNCTION_NAME }}
-          path: ${{ env.DOTNET_ROOT }}/${{ env.FUNCTION_NAME }}
-
-  build-and-deploy:
-    runs-on: windows-latest
-    needs: [build_function]
-    
-    steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ env.FUNCTION_NAME }}
       
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
@@ -187,5 +103,5 @@ jobs:
         with:
           app-name: '${{ env.FUNCTION_NAME }}'
           slot-name: 'Production'
-          package: ${{ env.DOTNET_ROOT }}
+          package: '${{ env.FUNCTION_PROJECT_NAME }}/output'
           publish-profile: ${{ secrets.AZURE_COMPAGO_FUNCTION_PUBLISH_PROFILE }}
