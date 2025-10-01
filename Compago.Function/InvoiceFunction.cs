@@ -42,5 +42,12 @@ namespace Compago.Function
             var billing = await delegateService.GetBillingAsync(SupportedExternalSource.MicrosoftAzure, fromDate, toDate, currency);
             return new OkObjectResult(billing);
         }
+
+        [Function("Function1")]
+        public IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequest req)
+        {
+            logger.LogInformation("C# HTTP trigger function processed a request.");
+            return new OkObjectResult("Welcome to Azure Functions!");
+        }
     }
 }
