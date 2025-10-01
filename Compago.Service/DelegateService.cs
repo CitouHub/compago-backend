@@ -33,12 +33,19 @@ namespace Compago.Service
                 {toDate:yyyy-MM-dd}, 
                 {currency}");
 
-            var billing = supportedExternalSource switch
+            var billing = new BillingDTO()
             {
-                SupportedExternalSource.GSuite => await gSuiteService.GetBillingAsync(fromDate, toDate),
-                SupportedExternalSource.MicrosoftAzure => await microsoftAzureService.GetBillingAsync(fromDate, toDate),
-                _ => throw new ServiceException(ExceptionType.ExternalSourceNotSupported)
+                Currency = "sdf",
+                Invoices = new List<InvoiceDTO>(),
+                OrigialCurrency = "asdf"
             };
+
+            //var billing = supportedExternalSource switch
+            //{
+            //    SupportedExternalSource.GSuite => await gSuiteService.GetBillingAsync(fromDate, toDate),
+            //    SupportedExternalSource.MicrosoftAzure => await microsoftAzureService.GetBillingAsync(fromDate, toDate),
+            //    _ => throw new ServiceException(ExceptionType.ExternalSourceNotSupported)
+            //};
 
             if (billing != null && currency != null && currency.Replace(" ", "").Length > 0)
             {
@@ -53,7 +60,7 @@ namespace Compago.Service
                 billing.Currency = currency;
             }
 
-            return new BillingDTO();
+            return billing;
         }
     }
 }
