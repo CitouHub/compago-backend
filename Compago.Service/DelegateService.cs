@@ -34,7 +34,8 @@ namespace Compago.Service
             logger.LogDebug("{message}", @$"{supportedExternalSource}, 
                 {fromDate:yyyy-MM-dd}, 
                 {toDate:yyyy-MM-dd}, 
-                {currency}");
+                {currency},
+                {settings.Value.APIKey}");
 
             var billing = new BillingDTO()
             {
