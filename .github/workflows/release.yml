@@ -1,6 +1,7 @@
 name: Compago release
 
 env:
+  DOTNET_VERSION: '9'
   DOTNET_VERSION_GENERAL: '9'
   DOTNET_VERSION_SPECIFIC: '9.0.x'
   API_PROJECT_NAME: Compago.API
