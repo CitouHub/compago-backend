@@ -28,30 +28,30 @@ namespace Compago.Service
             DateTime toDate,
             string? currency = null)
         {
-            //logger.LogDebug("{message}", @$"{supportedExternalSource}, 
-            //    {fromDate:yyyy-MM-dd}, 
-            //    {toDate:yyyy-MM-dd}, 
-            //    {currency}");
+            logger.LogDebug("{message}", @$"{supportedExternalSource}, 
+                {fromDate:yyyy-MM-dd}, 
+                {toDate:yyyy-MM-dd}, 
+                {currency}");
 
-            //var billing = supportedExternalSource switch
-            //{
-            //    SupportedExternalSource.GSuite => await gSuiteService.GetBillingAsync(fromDate, toDate),
-            //    SupportedExternalSource.MicrosoftAzure => await microsoftAzureService.GetBillingAsync(fromDate, toDate),
-            //    _ => throw new ServiceException(ExceptionType.ExternalSourceNotSupported)
-            //};
+            var billing = supportedExternalSource switch
+            {
+                SupportedExternalSource.GSuite => await gSuiteService.GetBillingAsync(fromDate, toDate),
+                SupportedExternalSource.MicrosoftAzure => await microsoftAzureService.GetBillingAsync(fromDate, toDate),
+                _ => throw new ServiceException(ExceptionType.ExternalSourceNotSupported)
+            };
 
-            //if (billing != null && currency != null && currency.Replace(" ", "").Length > 0)
-            //{
-            //    foreach (var invoice in billing.Invoices)
-            //    {
-            //        var exchangeRate = await currencyService.GetExchangeRateAsync(billing.Currency, currency, invoice.Date);
-            //        invoice.Price = Math.Round(invoice.Price * exchangeRate, 2);
-            //        invoice.ExchangeRate = exchangeRate;
-            //    }
+            if (billing != null && currency != null && currency.Replace(" ", "").Length > 0)
+            {
+                foreach (var invoice in billing.Invoices)
+                {
+                    var exchangeRate = await currencyService.GetExchangeRateAsync(billing.Currency, currency, invoice.Date);
+                    invoice.Price = Math.Round(invoice.Price * exchangeRate, 2);
+                    invoice.ExchangeRate = exchangeRate;
+                }
 
-            //    billing.OrigialCurrency = billing.Currency;
-            //    billing.Currency = currency;
-            //}
+                billing.OrigialCurrency = billing.Currency;
+                billing.Currency = currency;
+            }
 
             return new BillingDTO();
         }
