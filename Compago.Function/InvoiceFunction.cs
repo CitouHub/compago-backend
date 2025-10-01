@@ -44,12 +44,13 @@ namespace Compago.Function
         }
 
         [Function("Function1")]
-        public IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "like/this/{fromDate}")] HttpRequest req, DateTime fromDate)
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "like/this/{fromDate}")] HttpRequest req, DateTime fromDate)
         {
             logger.LogDebug("{message}", @$"HTTP Function call to 
             {SupportedExternalSource.MicrosoftAzure}, 
             {fromDate:yyyy-MM-dd}");
 
+            var billing = await delegateService.GetBillingAsync(SupportedExternalSource.MicrosoftAzure, fromDate, fromDate);
             return new OkObjectResult($"Welcome to Azure Functions! {fromDate:yyyy-MM-dd}");
         }
     }
