@@ -162,14 +162,14 @@ jobs:
         shell: pwsh
         run: |
           pushd './${{ env.FUNCTION_PROJECT_NAME }}'
-          dotnet build --configuration Release --output ./output
+          dotnet build --configuration Release --output ${{ env.DOTNET_ROOT }}/${{ env.FUNCTION_NAME }}
           popd
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.FUNCTION_NAME }}
-          path: output
+          path: ${{ env.DOTNET_ROOT }}/${{ env.FUNCTION_NAME }}
 
   build-and-deploy:
     runs-on: windows-latest
