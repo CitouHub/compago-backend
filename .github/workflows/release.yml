@@ -1,13 +1,11 @@
 name: Compago release
 
 env:
-  DOTNET_VERSION: '9'
+  DOTNET_VERSION: '9.0.x'
   API_PROJECT_NAME: Compago.API
   API_NAME: wa-compago-api
   FUNCTION_PROJECT_NAME: Compago.Function
   FUNCTION_NAME: fa-compago
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'Compago.Function' # set this to the path to your web app project, defaults to the repository root
-  DOTNET_VERSION2: '9.0.x' # set this to the dotnet version to use
 
 on:
   release:
@@ -163,15 +161,15 @@ jobs:
       - name: 'Resolve Project Dependencies Using Dotnet'
         shell: pwsh
         run: |
-          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-          dotnet build ${{env.FUNCTION_PROJECT_NAME}} --configuration Release --output ./output
+          pushd './${{ env.FUNCTION_PROJECT_NAME }}'
+          dotnet build --configuration Release
           popd
       
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
         id: fa
         with:
-          app-name: 'af-new-test-mf'
+          app-name: '${{ env.FUNCTION_NAME }}'
           slot-name: 'Production'
-          package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_050FCA793BEE40CCB293806ACE2B3138 }}
+          package: '${{ env.FUNCTION_PROJECT_NAME }}'
+          publish-profile: ${{ secrets.AZURE_COMPAGO_FUNCTION_PUBLISH_PROFILE }}
