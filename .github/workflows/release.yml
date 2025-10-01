@@ -168,7 +168,7 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: output/${{ env.FUNCTION_NAME }}
+          name: ./output/${{ env.FUNCTION_NAME }}
           path: ${{ env.DOTNET_ROOT }}/${{ env.FUNCTION_NAME }}
 
   build-and-deploy:
