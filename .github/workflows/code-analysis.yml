@@ -18,9 +18,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Exclude Compago.Function project
-        run: dotnet sln remove Compago.Function/Compago.Function.csproj
-
       - name: Restore Dependencies
         run: dotnet restore
 
