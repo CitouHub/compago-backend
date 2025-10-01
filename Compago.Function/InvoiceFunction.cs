@@ -12,7 +12,7 @@ namespace Compago.Function
         IDelegateService delegateService)
     {
         [Function("BillingGSuite")]
-        public async Task<IActionResult> RunBillingGSuite([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "billing/gsuite/{fromDate}/{toDate}")] HttpRequest _,
+        public async Task<IActionResult> RunBillingGSuite([HttpTrigger(AuthorizationLevel.Function, "get", Route = "billing/gsuite/{fromDate}/{toDate}")] HttpRequest _,
             DateTime fromDate,
             DateTime toDate,
             string? currency)
@@ -28,7 +28,7 @@ namespace Compago.Function
         }
 
         [Function("BillingMicrosoftAzure")]
-        public async Task<IActionResult> RunBillingMicrosoftAzure([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "billing/microsoftazure/{fromDate}/{toDate}")] HttpRequest _,
+        public async Task<IActionResult> RunBillingMicrosoftAzure([HttpTrigger(AuthorizationLevel.Function, "get", Route = "billing/microsoftazure/{fromDate}/{toDate}")] HttpRequest _,
             DateTime fromDate,
             DateTime toDate,
             string? currency)
