@@ -77,43 +77,43 @@ jobs:
         with:
             name: ${{ env.API_NAME }}      
 
-  build_function:
-    name: Compago Function Build
-    runs-on: ubuntu-24.04
+  # build_function:
+  #   name: Compago Function Build
+  #   runs-on: ubuntu-24.04
 
-    steps:
-      - uses: actions/checkout@v4
+  #   steps:
+  #     - uses: actions/checkout@v4
 
-      - name: Set up .NET ${{ env.DOTNET_VERSION }}
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
+  #     - name: Set up .NET ${{ env.DOTNET_VERSION }}
+  #       uses: actions/setup-dotnet@v4
+  #       with:
+  #         dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Set up dependency caching for faster builds
-        uses: actions/cache@v4
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
+  #     - name: Set up dependency caching for faster builds
+  #       uses: actions/cache@v4
+  #       with:
+  #         path: ~/.nuget/packages
+  #         key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-nuget-
 
-      - name: Exclude Compago.Test project
-        run: dotnet sln remove Compago.Test/Compago.Test.csproj
+  #     - name: Exclude Compago.Test project
+  #       run: dotnet sln remove Compago.Test/Compago.Test.csproj
 
-      - name: Exclude Compago.API project
-        run: dotnet sln remove Compago.API/Compago.API.csproj
+  #     - name: Exclude Compago.API project
+  #       run: dotnet sln remove Compago.API/Compago.API.csproj
 
-      - name: Build ${{env.FUNCTION_PROJECT_NAME}}
-        run: dotnet build ${{env.FUNCTION_PROJECT_NAME}} --configuration Release
+  #     - name: Build ${{env.FUNCTION_PROJECT_NAME}}
+  #       run: dotnet build ${{env.FUNCTION_PROJECT_NAME}} --configuration Release
 
-      - name: Publish with dotnet
-        run: dotnet publish --configuration Release --property:PublishDir=${{ env.DOTNET_ROOT }}/${{ env.FUNCTION_NAME }}
+  #     - name: Publish with dotnet
+  #       run: dotnet publish --configuration Release --property:PublishDir=${{ env.DOTNET_ROOT }}/${{ env.FUNCTION_NAME }}
 
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.FUNCTION_NAME }}
-          path: ${{ env.DOTNET_ROOT }}/${{ env.FUNCTION_NAME }}
+  #     - name: Upload build artifact
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: ${{ env.FUNCTION_NAME }}
+  #         path: ${{ env.DOTNET_ROOT }}/${{ env.FUNCTION_NAME }}
 
   # deploy_function:
   #   name: Compago Function Deploy
