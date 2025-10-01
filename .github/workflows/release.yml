@@ -187,5 +187,5 @@ jobs:
         with:
           app-name: '${{ env.FUNCTION_NAME }}'
           slot-name: 'Production'
-          package: .
+          package: ${{ env.DOTNET_ROOT }}
           publish-profile: ${{ secrets.AZURE_COMPAGO_FUNCTION_PUBLISH_PROFILE }}
