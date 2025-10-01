@@ -3,7 +3,9 @@ using Compago.Domain;
 using Compago.Service.CustomeException;
 using Compago.Service.ExternalSource.GSuite;
 using Compago.Service.ExternalSource.MicrosoftAzure;
+using Compago.Service.Settings;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Compago.Service
 {
@@ -20,7 +22,8 @@ namespace Compago.Service
         ILogger<DelegateService> logger,
         IGSuiteService gSuiteService,
         IMicrosoftAzureService microsoftAzureService,
-        ICurrencyService currencyService) : IDelegateService
+        ICurrencyService currencyService,
+        IOptions<CurrencyServiceSettings.EX> settings) : IDelegateService
     {
         public async Task<BillingDTO?> GetBillingAsync(
             SupportedExternalSource supportedExternalSource,
