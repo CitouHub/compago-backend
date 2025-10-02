@@ -1,5 +1,6 @@
 using Asp.Versioning;
 using AutoMapper;
+using Compago.API;
 using Compago.API.ExceptionHandling;
 using Compago.API.SwaggerConfig;
 using Compago.Data;
@@ -48,6 +49,7 @@ builder.Host.ConfigureServices((context, services) =>
     services.Configure<ExternalSourceSettings.GSuite>(context.Configuration.GetSection("ExternalSourceSettings:GSuite"));
     services.Configure<ExternalSourceSettings.MicrosoftAzure>(context.Configuration.GetSection("ExternalSourceSettings:MicrosoftAzure"));
     services.Configure<CurrencyServiceSettings.EX>(context.Configuration.GetSection("CurrencyServiceSettings:EX"));
+    services.Configure<GeneralSettings>(context.Configuration.GetSection("Settings"));
 });
 
 builder.Services.AddDbContext<CompagoDbContext>(options =>
@@ -90,6 +92,8 @@ app.UseSwaggerUI();
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

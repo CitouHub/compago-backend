@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Compago.Common
+namespace Compago.Common.Extension
 {
     public static class StringExtension
     {

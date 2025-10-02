@@ -29,4 +29,8 @@
         <ProjectReference Include="..\Compago.Service\Compago.Service.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Authorization\" />
+    </ItemGroup>
+
 </Project>

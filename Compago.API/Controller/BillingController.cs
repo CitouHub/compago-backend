@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Compago.API.Security;
 using Compago.Common;
 using Compago.Domain;
 using Compago.Service;
@@ -13,6 +14,7 @@ namespace Compago.API.Controller
         ILogger<BillingController> logger,
         IDelegateService delegateService) : ControllerBase
     {
+        [AuthorizeRole(Role.Admin, Role.User)]
         [HttpGet("{supportedExternalSource}/{fromDate}/{toDate}")]
         public async Task<ActionResult<BillingDTO?>> GetBillingAsync(
             SupportedExternalSource supportedExternalSource, 

@@ -293,5 +293,54 @@ namespace Compago.Test.Service
                 Assert.Null(updateDbUser2);
             }
         }
+
+        public class GetUseS
+        {
+            [Fact]
+            public async Task UserNotFound()
+            {
+                // Arrange
+                var dbContext = await DatabaseHelper.GetContextAsync();
+                var userService = new UserService(dbContext, _mapper);
+
+                var userDb = UserHelper.NewDb();
+                await dbContext.Users.AddAsync(userDb);
+                await dbContext.SaveChangesAsync();
+
+                var requesUsername = userDb.Username + "1";
+
+                // Act
+                var exception = await Assert.ThrowsAsync<ServiceException>(() =>
+                    userService.GetUserSecurityCredentialsAsync(requesUsername));
+
+                // Assert
+                Assert.Equal(ExceptionType.ItemNotFound, exception.ExceptionType);
+                Assert.Contains(nameof(User), exception.Message);
+                Assert.Contains(nameof(User.Username), exception.Message);
+                Assert.Contains(requesUsername.ToString(), exception.Message);
+            }
+
+            [Fact]
+            public async Task Success()
+            {
+                // Arrange
+                var dbContext = await DatabaseHelper.GetContextAsync();
+                var userService = new UserService(dbContext, _mapper);
+
+                var userDb1 = UserHelper.NewDb(id: 1, username: "user1");
+                var userDb2 = UserHelper.NewDb(id: 2, username: "user2");
+                await dbContext.Users.AddRangeAsync(userDb1, userDb2);
+                await dbContext.SaveChangesAsync();
+
+                // Act
+                var result = await userService.GetUserSecurityCredentialsAsync(userDb2.Username);
+
+                // Assert
+                Assert.NotNull(result);
+                Assert.Equal(userDb2.RoleId, (short)result.RoleId);
+                Assert.Equal(userDb2.PasswordHash, result.PasswordHash);
+                Assert.Equal(userDb2.PasswordHashSalt, result.PasswordHashSalt);
+            }
+        }
     }
 }

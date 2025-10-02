@@ -14,6 +14,7 @@ namespace Compago.Service
         Task<UserDTO> GetUserAsync(int userId);
         Task<UserDTO> UpdateUserAsync(UserDTO userDto);
         Task DeleteUserAsync(int userId);
+        Task<UserSecurityCredentialsDTO> GetUserSecurityCredentialsAsync(string username);
     }
 
     public class UserService(
@@ -110,6 +111,20 @@ namespace Compago.Service
             {
                 throw new ServiceException(ExceptionType.ItemNotFound, details: @$"{nameof(User)} with 
                     {nameof(User.Id)} = {userDto.Id} not found");
+            }
+        }
+
+        public async Task<UserSecurityCredentialsDTO> GetUserSecurityCredentialsAsync(string username)
+        {
+            var dbUser = await dbContext.Users.FirstOrDefaultAsync(_ => _.Username == username);
+            if (dbUser != null)
+            {
+                return mapper.Map<UserSecurityCredentialsDTO>(dbUser);
+            }
+            else
+            {
+                throw new ServiceException(ExceptionType.ItemNotFound, details: @$"{nameof(User)} with 
+                    {nameof(User.Username)} = {username} not found");
             }
         }
     }

@@ -5,11 +5,28 @@ using Compago.Test.Helper;
 using NSubstitute;
 using System.Net;
 using System.Net.Http.Json;
+using Xunit.Abstractions;
 
 namespace Compago.Test.API.Controller
 {
     public class BillingControllerTest
     {
+        public class Authorization(ITestOutputHelper output)
+        {
+            private readonly AuthorizationTestHelper _authorizationTestHelper = new(output);
+
+            [Theory]
+            [InlineData(Helper.HttpMethod.Get, "billing/externalSource/2025-01-01/2025-01-01", Role.Admin, Role.User)]
+            public async Task AuthorizeRoles(Helper.HttpMethod httpMethod, string url, params Role[] authorizedRole)
+            {
+                // Act
+                var unexpectedError = await _authorizationTestHelper.TestAuthorize(httpMethod, url, authorizedRole);
+
+                // Assert
+                Assert.Equal(0, unexpectedError);
+            }
+        }
+
         public class GetBilling()
         {
             [Theory]
@@ -23,9 +40,13 @@ namespace Compago.Test.API.Controller
                 // Arrange
                 var app = new CompagoAPIMock();
                 var client = app.CreateClient();
+                client.DefaultRequestHeaders.Add("X-Version", "1");
 
                 // Act
-                var response = await client.GetAsync($"{Constants.API_VERSION}/billing/{supportedExternalSource}/{fromDate}/{toDate}");
+                var response = await client.GetAsync(@$"{Constants.API_VERSION}/billing/
+                    {supportedExternalSource}/{
+                    fromDate}/
+                    {toDate}");
                 var result = await response.Content.ReadFromJsonAsync<ErrorDTO>();
 
                 // Assert

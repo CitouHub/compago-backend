@@ -1,4 +1,6 @@
 using Asp.Versioning;
+using Compago.API.Security;
+using Compago.Common;
 using Compago.Domain;
 using Compago.Service;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +10,7 @@ namespace Compago.API.Controller
     [ApiController]
     [Route("v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
+    [AuthorizeRole(Role.Admin)]
     public class UserController(
         ILogger<UserController> logger,
         IUserService userService) : ControllerBase

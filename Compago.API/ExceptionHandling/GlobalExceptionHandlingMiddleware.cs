@@ -72,6 +72,12 @@ namespace Compago.API.ExceptionHandling
                         break;
                 }
             }
+            else if (exception is UnauthorizedAccessException)
+            {
+                status = HttpStatusCode.Unauthorized;
+                title = "Unauthorized";
+                typeUrl = "https://datatracker.ietf.org/doc/html/rfc7235#section-3.1";
+            }
             else
             {
                 status = HttpStatusCode.InternalServerError;

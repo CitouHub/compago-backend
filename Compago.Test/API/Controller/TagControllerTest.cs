@@ -7,11 +7,32 @@ using NSubstitute;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text;
+using Xunit.Abstractions;
 
 namespace Compago.Test.API.Controller
 {
     public class TagControllerTest
     {
+        public class Authorization(ITestOutputHelper output)
+        {
+            private readonly AuthorizationTestHelper _authorizationTestHelper = new(output);
+
+            [Theory]
+            [InlineData(Helper.HttpMethod.Post, "tag", Compago.Common.Role.Admin, Compago.Common.Role.User)]
+            [InlineData(Helper.HttpMethod.Get, "tag/list", Compago.Common.Role.Admin, Compago.Common.Role.User)]
+            [InlineData(Helper.HttpMethod.Get, "tag/1", Compago.Common.Role.Admin, Compago.Common.Role.User)]
+            [InlineData(Helper.HttpMethod.Put, "tag", Compago.Common.Role.Admin, Compago.Common.Role.User)]
+            [InlineData(Helper.HttpMethod.Delete, "tag/1", Compago.Common.Role.Admin, Compago.Common.Role.User)]
+            public async Task AuthorizeRoles(Helper.HttpMethod httpMethod, string url, params Compago.Common.Role[] authorizedRole)
+            {
+                // Act
+                var unexpectedError = await _authorizationTestHelper.TestAuthorize(httpMethod, url, authorizedRole);
+
+                // Assert
+                Assert.Equal(0, unexpectedError);
+            }
+        }
+
         public class AddTagAsync
         {
             [Fact]

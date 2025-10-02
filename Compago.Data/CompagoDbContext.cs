@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Compago.Data;
 
-public partial class CompagoDbContext : DbContext
+public partial class CompagoDbContext : DbContext   
 {
     public CompagoDbContext(DbContextOptions<CompagoDbContext> options)
         : base(options)

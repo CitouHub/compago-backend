@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Compago.Common;
+using Compago.Common.Extension;
 using Compago.Data;
 using Compago.Domain;
 using Compago.Service.CustomeException;

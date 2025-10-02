@@ -1,4 +1,4 @@
-﻿using Compago.Common;
+﻿using Compago.Common.Extension;
 
 namespace Compago.Test.Common
 {

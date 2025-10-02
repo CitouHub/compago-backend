@@ -15,6 +15,9 @@ namespace Compago.Mapping
                 .ForMember(to => to.RoleId, c => c.MapFrom(from => (short)from.RoleId))
                 .ForMember(to => to.Role, opt => opt.Ignore());
 
+            CreateMap<User, UserSecurityCredentialsDTO>()
+                .ForMember(to => to.RoleId, c => c.MapFrom(from => (Common.Role)from.RoleId));
+
             CreateMap<Tag, TagDTO>().ReverseMap();
 
             CreateMap<InvoiceTag, InvoiceTagDTO>().ReverseMap();

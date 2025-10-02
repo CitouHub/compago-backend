@@ -9,10 +9,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NSubstitute;
+using System;
 
 namespace Compago.Test.API
 {
-    public class CompagoAPIMock : WebApplicationFactory<Program>
+    public class CompagoAPIMock() : WebApplicationFactory<Program>
     {
         private readonly Dictionary<string, string?> _inMemoryConfiguration = [];
 
@@ -72,6 +73,11 @@ namespace Compago.Test.API
 
         public void UpdateConfiguration(string key, string value)
         {
+            var settingExists = _inMemoryConfiguration.ContainsKey(key);
+            if (settingExists == true)
+            {
+                _inMemoryConfiguration.Remove(key);
+            }
             _inMemoryConfiguration.Add(key, value);
         }
     }

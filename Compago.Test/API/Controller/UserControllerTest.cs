@@ -1,4 +1,5 @@
 ﻿using Compago.API.ExceptionHandling;
+using Compago.Common;
 using Compago.Domain;
 using Compago.Test.Helper;
 using Compago.Test.Helper.Domain;
@@ -7,11 +8,32 @@ using NSubstitute;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text;
+using Xunit.Abstractions;
 
 namespace Compago.Test.API.Controller
 {
     public class UserControllerTest
     {
+        public class Authorization(ITestOutputHelper output)
+        {
+            private readonly AuthorizationTestHelper _authorizationTestHelper = new(output);
+
+            [Theory]
+            [InlineData(Helper.HttpMethod.Post, "user", Role.Admin)]
+            [InlineData(Helper.HttpMethod.Get, "user/list", Role.Admin)]
+            [InlineData(Helper.HttpMethod.Get, "user/1", Role.Admin)]
+            [InlineData(Helper.HttpMethod.Put, "user", Role.Admin)]
+            [InlineData(Helper.HttpMethod.Delete, "user/1", Role.Admin)]
+            public async Task AuthorizeRoles(Helper.HttpMethod httpMethod, string url, params Role[] authorizedRole)
+            {
+                // Act
+                var unexpectedError = await _authorizationTestHelper.TestAuthorize(httpMethod, url, authorizedRole);
+
+                // Assert
+                Assert.Equal(0, unexpectedError);
+            }
+        }
+
         public class AddUserAsync
         {
             [Theory]
