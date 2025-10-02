@@ -44,6 +44,25 @@ namespace Compago.Test.Mapping
             }
         }
 
+        public class UserSecurityCredentialsMapping
+        {
+            [Fact]
+            public void ToDTO()
+            {
+                // Arrange
+                var dbRole = RoleHelper.NewDb();
+                var dbUser = UserHelper.NewDb(roleId: (Compago.Common.Role)dbRole.Id);
+                dbUser.Role = dbRole;
+
+                // Act
+                var dto = _mapper.Map<UserSecurityCredentialsDTO>(dbUser);
+
+                // Assert
+                Assert.NotNull(dto);
+                Assert.Equal(dbRole.Id, (short)dto.RoleId);
+            }
+        }
+
         public class TagMapping
         {
             [Fact]

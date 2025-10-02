@@ -294,7 +294,7 @@ namespace Compago.Test.Service
             }
         }
 
-        public class GetUseS
+        public class GetUserSecurityCredentials
         {
             [Fact]
             public async Task UserNotFound()
