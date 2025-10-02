@@ -11,7 +11,7 @@ namespace Compago.Test.API.Controller
             private readonly AuthorizationTestHelper _authorizationTestHelper = new(output);
 
             [Theory]
-            [InlineData(Helper.HttpMethod.Get, "", Role.Admin, Role.User)]
+            [InlineData(Helper.HttpMethod.Post, "login", Role.Admin, Role.User)]
             public async Task AuthorizeRoles(Helper.HttpMethod httpMethod, string url, params Role[] authorizedRole)
             {
                 // Act

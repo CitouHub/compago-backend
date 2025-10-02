@@ -11,8 +11,8 @@ namespace Compago.API.Controller
     [AuthorizeRole(Role.Admin, Role.User)]
     public class LoginController(ILogger<LoginController> logger) : ControllerBase
     {
-        [HttpGet("login")]
-        public ActionResult<bool> LoginASync()
+        [HttpPost("")]
+        public ActionResult<bool> LoginSync()
         {
             logger.LogDebug("{message}", @$"Call to 
                 {nameof(ControllerContext.ActionDescriptor.ActionName)}");
