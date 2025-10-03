@@ -44,6 +44,7 @@ namespace Compago.Test.API.Controller
                 // Arrange
                 var app = new CompagoAPIMock();
                 var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
 
                 var request = new { roleId, username };
                 var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
@@ -64,6 +65,7 @@ namespace Compago.Test.API.Controller
                 // Arrange
                 var app = new CompagoAPIMock();
                 var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
 
                 var userDto = UserHelper.New();
                 var content = new StringContent(JsonConvert.SerializeObject(userDto), Encoding.UTF8, "application/json");
@@ -72,6 +74,7 @@ namespace Compago.Test.API.Controller
 
                 // Act
                 var response = await client.PostAsync($"{Constants.API_VERSION}/user", content);
+                var asdf = response.RequestMessage.RequestUri;
                 var result = await response.Content.ReadFromJsonAsync<UserDTO>();
 
                 // Assert
@@ -89,6 +92,7 @@ namespace Compago.Test.API.Controller
                 // Arrange
                 var app = new CompagoAPIMock();
                 var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
 
                 // Act
                 var response = await client.GetAsync($"{Constants.API_VERSION}/user/invalid");
@@ -106,10 +110,10 @@ namespace Compago.Test.API.Controller
                 // Arrange
                 var app = new CompagoAPIMock();
                 var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
 
                 var userId = 1;
                 var userDto = UserHelper.New(id: userId);
-
                 app.MockUserService.GetUserAsync(userId).Returns(userDto);
 
                 // Act
@@ -130,10 +134,11 @@ namespace Compago.Test.API.Controller
             {
                 // Arrange
                 var app = new CompagoAPIMock();
+                var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
                 app.MockUserService.GetUsersAsync().Returns((List<UserDTO>?)null);
 
                 // Act
-                var client = app.CreateClient();
                 var response = await client.GetAsync($"{Constants.API_VERSION}/user/list");
                 var result = await response.Content.ReadAsStringAsync();
 
@@ -148,10 +153,11 @@ namespace Compago.Test.API.Controller
             {
                 // Arrange
                 var app = new CompagoAPIMock();
+                var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
                 app.MockUserService.GetUsersAsync().Returns([new(), new()]);
 
                 // Act
-                var client = app.CreateClient();
                 var response = await client.GetAsync($"{Constants.API_VERSION}/user/list");
                 var result = await response.Content.ReadFromJsonAsync<List<UserDTO>>();
 
@@ -172,6 +178,7 @@ namespace Compago.Test.API.Controller
                 // Arrange
                 var app = new CompagoAPIMock();
                 var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
 
                 var request = new { roleId, username };
                 var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
@@ -192,6 +199,7 @@ namespace Compago.Test.API.Controller
                 // Arrange
                 var app = new CompagoAPIMock();
                 var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
 
                 var userDto = UserHelper.New();
                 var content = new StringContent(JsonConvert.SerializeObject(userDto), Encoding.UTF8, "application/json");
@@ -217,6 +225,7 @@ namespace Compago.Test.API.Controller
                 // Arrange
                 var app = new CompagoAPIMock();
                 var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
 
                 // Act
                 var response = await client.DeleteAsync($"{Constants.API_VERSION}/user/invalid");
@@ -234,6 +243,7 @@ namespace Compago.Test.API.Controller
                 // Arrange
                 var app = new CompagoAPIMock();
                 var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
                 var userId = 1;
 
                 // Act

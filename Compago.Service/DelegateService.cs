@@ -40,17 +40,21 @@ namespace Compago.Service
                 _ => throw new ServiceException(ExceptionType.ExternalSourceNotSupported)
             };
 
-            if (billing != null && currency != null && currency.Replace(" ", "").Length > 0)
+            if (billing != null)
             {
-                foreach (var invoice in billing.Invoices)
+                if (currency != null && currency.Replace(" ", "").Length > 0)
                 {
-                    var exchangeRate = await currencyService.GetExchangeRateAsync(billing.Currency, currency, invoice.Date);
-                    invoice.Price = Math.Round(invoice.Price * exchangeRate, 2);
-                    invoice.ExchangeRate = exchangeRate;
-                }
+                    foreach (var invoice in billing.Invoices)
+                    {
+                        var exchangeRate = await currencyService.GetExchangeRateAsync(billing.Currency, currency, invoice.Date);
+                        invoice.Price = Math.Round(invoice.Price * exchangeRate, 2);
+                        invoice.ExchangeRate = exchangeRate;
+                    }
 
-                billing.OrigialCurrency = billing.Currency;
-                billing.Currency = currency;
+                    billing.OrigialCurrency = billing.Currency;
+                    billing.Currency = currency;
+                }
+                billing.Source = supportedExternalSource;
             }
 
             return billing;

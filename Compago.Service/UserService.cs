@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure;
 using Compago.Common;
 using Compago.Data;
 using Compago.Domain;
@@ -19,6 +20,7 @@ namespace Compago.Service
 
     public class UserService(
         CompagoDbContext dbContext,
+        ICacheService cacheService,
         IMapper mapper) : IUserService
     {
         public async Task<UserDTO> AddUserAsync(UserDTO userDto)
@@ -28,12 +30,14 @@ namespace Compago.Service
                 var userExists = await dbContext.Users.AnyAsync(_ => _.Username == userDto.Username);
                 if (userExists == false)
                 {
-                    var dbUser = mapper.Map<User>(userDto);
+                    var userSecurityCredentials = cacheService.Get<UserSecurityCredentialsDTO>();
 
+                    var dbUser = mapper.Map<User>(userDto);
                     var (hash, salt) = PasswordHandler.HashPassword(userDto.Password);
                     dbUser.PasswordHash = hash;
                     dbUser.PasswordHashSalt = salt;
-
+                    dbUser.CreatedAt = DateTime.UtcNow;
+                    dbUser.CreatedBy = userSecurityCredentials!.Id;
                     await dbContext.Users.AddAsync(dbUser);
                     await dbContext.SaveChangesAsync();
 
@@ -95,7 +99,11 @@ namespace Compago.Service
                 var otherUserExists = await dbContext.Users.AnyAsync(_ => _.Username == userDto.Username && _.Id != userDto.Id);
                 if (otherUserExists == false)
                 {
+                    var userSecurityCredentials = cacheService.Get<UserSecurityCredentialsDTO>();
+
                     mapper.Map(userDto, dbUser);
+                    dbUser.UpdatedAt = DateTime.UtcNow;
+                    dbUser.UpdatedBy = userSecurityCredentials!.Id;
                     await dbContext.SaveChangesAsync();
 
                     dbUser = await dbContext.Users.Include(_ => _.Role).FirstOrDefaultAsync(_ => _.Id == dbUser.Id);

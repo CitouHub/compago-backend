@@ -41,6 +41,7 @@ namespace Compago.Test.API.Controller
                 // Arrange
                 var app = new CompagoAPIMock();
                 var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
 
                 var request = new { name = (string?)null };
                 var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
@@ -61,6 +62,7 @@ namespace Compago.Test.API.Controller
                 // Arrange
                 var app = new CompagoAPIMock();
                 var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
 
                 var tagDto = TagHelper.New();
                 var content = new StringContent(JsonConvert.SerializeObject(tagDto), Encoding.UTF8, "application/json");
@@ -86,6 +88,7 @@ namespace Compago.Test.API.Controller
                 // Arrange
                 var app = new CompagoAPIMock();
                 var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
 
                 // Act
                 var response = await client.GetAsync($"{Constants.API_VERSION}/tag/invalid");
@@ -103,6 +106,7 @@ namespace Compago.Test.API.Controller
                 // Arrange
                 var app = new CompagoAPIMock();
                 var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
 
                 var tagId = (short)1;
                 var tagDto = TagHelper.New(id: tagId);
@@ -127,10 +131,11 @@ namespace Compago.Test.API.Controller
             {
                 // Arrange
                 var app = new CompagoAPIMock();
+                var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
                 app.MockTagService.GetTagsAsync().Returns((List<TagDTO>?)null);
 
                 // Act
-                var client = app.CreateClient();
                 var response = await client.GetAsync($"{Constants.API_VERSION}/tag/list");
                 var result = await response.Content.ReadAsStringAsync();
 
@@ -145,10 +150,11 @@ namespace Compago.Test.API.Controller
             {
                 // Arrange
                 var app = new CompagoAPIMock();
+                var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
                 app.MockTagService.GetTagsAsync().Returns([new(), new()]);
 
                 // Act
-                var client = app.CreateClient();
                 var response = await client.GetAsync($"{Constants.API_VERSION}/tag/list");
                 var result = await response.Content.ReadFromJsonAsync<List<TagDTO>>();
 
@@ -169,6 +175,7 @@ namespace Compago.Test.API.Controller
                 // Arrange
                 var app = new CompagoAPIMock();
                 var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
 
                 var request = new { roleId, tagname };
                 var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
@@ -189,11 +196,11 @@ namespace Compago.Test.API.Controller
                 // Arrange
                 var app = new CompagoAPIMock();
                 var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
+                app.MockTagService.UpdateTagAsync(Arg.Any<TagDTO>()).Returns(new TagDTO());
 
                 var tagDto = TagHelper.New();
                 var content = new StringContent(JsonConvert.SerializeObject(tagDto), Encoding.UTF8, "application/json");
-
-                app.MockTagService.UpdateTagAsync(Arg.Any<TagDTO>()).Returns(new TagDTO());
 
                 // Act
                 var response = await client.PutAsync($"{Constants.API_VERSION}/tag", content);
@@ -214,6 +221,7 @@ namespace Compago.Test.API.Controller
                 // Arrange
                 var app = new CompagoAPIMock();
                 var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
 
                 // Act
                 var response = await client.DeleteAsync($"{Constants.API_VERSION}/tag/invalid");
@@ -231,6 +239,7 @@ namespace Compago.Test.API.Controller
                 // Arrange
                 var app = new CompagoAPIMock();
                 var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
                 var tagId = 1;
 
                 // Act

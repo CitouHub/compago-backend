@@ -40,6 +40,7 @@ namespace Compago.Test.API.Controller
                 // Arrange
                 var app = new CompagoAPIMock();
                 var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
                 client.DefaultRequestHeaders.Add("X-Version", "1");
 
                 // Act
@@ -60,6 +61,8 @@ namespace Compago.Test.API.Controller
             {
                 // Arrange
                 var app = new CompagoAPIMock();
+                var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
                 app.MockDelegateService.GetBillingAsync(
                     Arg.Any<SupportedExternalSource>(),
                     Arg.Any<DateTime>(),
@@ -68,7 +71,6 @@ namespace Compago.Test.API.Controller
                     .Returns((BillingDTO?)null);
 
                 // Act
-                var client = app.CreateClient();
                 var response = await client.GetAsync($"{Constants.API_VERSION}/billing/{SupportedExternalSource.GSuite}/{DateTime.UtcNow:yyyy-MM-dd}/{DateTime.UtcNow:yyyy-MM-dd}");
                 var result = await response.Content.ReadAsStringAsync();
 
@@ -90,6 +92,9 @@ namespace Compago.Test.API.Controller
             {
                 // Arrange
                 var app = new CompagoAPIMock();
+                var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
+
                 var supportedExternalSource = SupportedExternalSource.GSuite;
                 var fromDate = new DateTime(2025, 01, 02);
                 var toDate = new DateTime(2025, 03, 04);
@@ -101,7 +106,6 @@ namespace Compago.Test.API.Controller
                     .Returns(new BillingDTO());
 
                 // Act
-                var client = app.CreateClient();
                 var response = await client.GetAsync($"{Constants.API_VERSION}/billing/{supportedExternalSource}/{fromDate:yyyy-MM-dd}/{toDate:yyyy-MM-dd}?currency={currency}");
                 var result = await response.Content.ReadFromJsonAsync<BillingDTO>();
 

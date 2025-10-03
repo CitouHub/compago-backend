@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using Compago.Domain;
 using Compago.Service;
-using Compago.Service.Settings;
 using Compago.Service.ExternalSource.GSuite;
 using Compago.Service.ExternalSource.MicrosoftAzure;
+using Compago.Service.Settings;
 using Compago.Test.Helper;
+using Compago.Test.Helper.Domain;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSubstitute;
@@ -27,5 +29,15 @@ namespace Compago.Test.Service
         protected static readonly IGSuiteService _gSuiteService = Substitute.For<IGSuiteService>();
         protected static readonly IMicrosoftAzureService _microsoftAzureService = Substitute.For<IMicrosoftAzureService>();
         protected static readonly ICurrencyService _currencyService = Substitute.For<ICurrencyService>();
+
+        protected static readonly int _cacheUserId = 999;
+
+        protected static ICacheService GetCacheService()
+        {
+            var cacheService = new CacheService();
+            var userSecurityCredentials = UserSecurityCredentialsHelper.New(id: _cacheUserId);
+            cacheService.Set<UserSecurityCredentialsDTO>(userSecurityCredentials);
+            return cacheService;
+        }
     }
 }

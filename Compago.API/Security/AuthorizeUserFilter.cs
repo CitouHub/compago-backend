@@ -1,4 +1,5 @@
 ﻿using Compago.Common;
+using Compago.Domain;
 using Compago.Service;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ namespace Compago.API.Security
     [AttributeUsage(AttributeTargets.All)]
     public class AuthorizeUserFilter(
         IUserService userService,
+        ICacheService cacheService,
         IOptions<GeneralSettings> settings,
         Role[] roles) : Attribute, IAuthorizationFilter
     {
@@ -32,6 +34,9 @@ namespace Compago.API.Security
                                     password, 
                                     userSecurityCredentials.PasswordHash,
                                     userSecurityCredentials.PasswordHashSalt);
+
+                                cacheService.Set<UserSecurityCredentialsDTO>(userSecurityCredentials);
+
                                 if (valid == false)
                                 {
                                     throw new UnauthorizedAccessException();

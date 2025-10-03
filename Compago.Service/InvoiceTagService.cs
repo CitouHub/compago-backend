@@ -15,6 +15,7 @@ namespace Compago.Service
 
     public class InvoiceTagService(
         CompagoDbContext dbContext,
+        ICacheService cacheService,
         IMapper mapper) : IInvoiceTagService
     {
         public async Task<InvoiceTagDTO> AddInvoiceTagAsync(InvoiceTagDTO invoiceTagDto)
@@ -25,7 +26,11 @@ namespace Compago.Service
                 var invoiceTagExists = await dbContext.InvoiceTags.AnyAsync(_ => _.TagId == invoiceTagDto.TagId && _.InvoiceId == invoiceTagDto.InvoiceId);
                 if (invoiceTagExists == false)
                 {
+                    var userSecurityCredentials = cacheService.Get<UserSecurityCredentialsDTO>();
+
                     var dbInvoiceTag = mapper.Map<InvoiceTag>(invoiceTagDto);
+                    dbInvoiceTag.CreatedAt = DateTime.UtcNow;
+                    dbInvoiceTag.CreatedBy = userSecurityCredentials!.Id;
                     await dbContext.InvoiceTags.AddAsync(dbInvoiceTag);
                     await dbContext.SaveChangesAsync();
 

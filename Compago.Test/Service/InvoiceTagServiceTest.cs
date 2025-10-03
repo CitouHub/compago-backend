@@ -16,7 +16,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var invoiceTagService = new InvoiceTagService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var invoiceTagService = new InvoiceTagService(dbContext, cacheService, _mapper);
 
                 var dbTag = TagHelper.NewDb();
                 await dbContext.Tags.AddAsync(dbTag);
@@ -40,7 +41,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var invoiceTagService = new InvoiceTagService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var invoiceTagService = new InvoiceTagService(dbContext, cacheService, _mapper);
 
                 var dbTag = TagHelper.NewDb();
                 await dbContext.Tags.AddAsync(dbTag);
@@ -77,7 +79,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var invoiceTagService = new InvoiceTagService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var invoiceTagService = new InvoiceTagService(dbContext, cacheService, _mapper);
 
                 var dbTag1 = TagHelper.NewDb(id: 1);
                 var dbTag2 = TagHelper.NewDb(id: 2);
@@ -95,6 +98,8 @@ namespace Compago.Test.Service
                 // Assert
                 var addedDbInvoiceTag = await dbContext.InvoiceTags.FirstOrDefaultAsync(_ => _.InvoiceId == givenInvoiceId && _.TagId == givenTagId);
                 Assert.NotNull(addedDbInvoiceTag);
+                Assert.Equal(addedDbInvoiceTag.CreatedBy, _cacheUserId);
+                Assert.True(addedDbInvoiceTag.CreatedAt > DateTime.UtcNow.AddMinutes(-1) && addedDbInvoiceTag.CreatedAt < DateTime.UtcNow.AddMinutes(1));
             }
         }
 
@@ -105,7 +110,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var invoiceTagService = new InvoiceTagService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var invoiceTagService = new InvoiceTagService(dbContext, cacheService, _mapper);
 
                 // Act
                 var result = await invoiceTagService.GetInvoiceTagsAsync(1);
@@ -119,7 +125,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var invoiceTagService = new InvoiceTagService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var invoiceTagService = new InvoiceTagService(dbContext, cacheService, _mapper);
 
                 var dbTag = TagHelper.NewDb();
                 await dbContext.Tags.AddAsync(dbTag);
@@ -149,7 +156,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var invoiceTagService = new InvoiceTagService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var invoiceTagService = new InvoiceTagService(dbContext, cacheService, _mapper);
 
                 var dbTag = TagHelper.NewDb(id: existingTagId);
                 await dbContext.Tags.AddAsync(dbTag);
@@ -176,7 +184,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var invoiceTagService = new InvoiceTagService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var invoiceTagService = new InvoiceTagService(dbContext, cacheService, _mapper);
 
                 var dbTag = TagHelper.NewDb();
                 await dbContext.Tags.AddAsync(dbTag);

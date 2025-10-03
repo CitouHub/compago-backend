@@ -22,7 +22,7 @@ namespace Compago.Test.Helper
         public async Task<int> TestAuthorize(HttpMethod httpMethod, string url, Compago.Common.Role[] authorizedRoles)
         {
             var app = new CompagoAPIMock();
-            app.UpdateConfiguration("Settings:AuthorizationActive", "true");
+            app.SetAuthorizationActive(true);
             var client = app.CreateClient();
 
             var unexpectedError = 0;

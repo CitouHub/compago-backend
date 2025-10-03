@@ -5,6 +5,7 @@ using Compago.Service.CustomeException;
 using Compago.Test.Helper;
 using Compago.Test.Helper.Domain;
 using Microsoft.EntityFrameworkCore;
+using static Compago.Test.Service.UserServiceTest;
 
 namespace Compago.Test.Service
 {
@@ -17,7 +18,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var userService = new UserService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var userService = new UserService(dbContext, cacheService, _mapper);
 
                 var user = UserHelper.New(password: null);
 
@@ -36,7 +38,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var userService = new UserService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var userService = new UserService(dbContext, cacheService, _mapper);
 
                 var username = "TestUser";
                 var userDb = UserHelper.NewDb(username: username);
@@ -61,7 +64,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var userService = new UserService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var userService = new UserService(dbContext, cacheService, _mapper);
 
                 var user = UserHelper.New(id: null);
 
@@ -71,6 +75,8 @@ namespace Compago.Test.Service
                 // Assert
                 var dbUser = await dbContext.Users.FirstOrDefaultAsync(_ => _.Id == 1);
                 Assert.NotNull(dbUser);
+                Assert.Equal(dbUser.CreatedBy, _cacheUserId);
+                Assert.True(dbUser.CreatedAt > DateTime.UtcNow.AddMinutes(-1) && dbUser.CreatedAt < DateTime.UtcNow.AddMinutes(1));
             }
         }
 
@@ -81,7 +87,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var userService = new UserService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var userService = new UserService(dbContext, cacheService, _mapper);
 
                 // Act
                 var result = await userService.GetUsersAsync();
@@ -95,7 +102,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var userService = new UserService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var userService = new UserService(dbContext, cacheService, _mapper);
 
                 var user1 = UserHelper.NewDb(id: 1, username: "User1");
                 var user2 = UserHelper.NewDb(id: 2, username: "User2");
@@ -121,7 +129,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var userService = new UserService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var userService = new UserService(dbContext, cacheService, _mapper);
 
                 var userDb = UserHelper.NewDb();
                 await dbContext.Users.AddAsync(userDb);
@@ -145,7 +154,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var userService = new UserService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var userService = new UserService(dbContext, cacheService, _mapper);
 
                 var userDb1 = UserHelper.NewDb(id: 1, username: "user1");
                 var userDb2 = UserHelper.NewDb(id: 2, username: "user2");
@@ -170,7 +180,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var userService = new UserService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var userService = new UserService(dbContext, cacheService, _mapper);
 
                 var userDb = UserHelper.NewDb();
                 await dbContext.Users.AddAsync(userDb);
@@ -194,7 +205,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var userService = new UserService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var userService = new UserService(dbContext, cacheService, _mapper);
 
                 var userDb1 = UserHelper.NewDb(id: 1, username: "user1");
                 var userDb2 = UserHelper.NewDb(id: 2, username: "user2");
@@ -219,7 +231,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var userService = new UserService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var userService = new UserService(dbContext, cacheService, _mapper);
 
                 var userDb1 = UserHelper.NewDb(id: 1, username: "user1");
                 var userDb2 = UserHelper.NewDb(id: 2, username: "user2", roleId: Compago.Common.Role.User);
@@ -242,6 +255,9 @@ namespace Compago.Test.Service
                 Assert.NotNull(updateDbUser);
                 Assert.Equal(newUsername, updateDbUser.Username);
                 Assert.Equal((short)newRole, updateDbUser.RoleId);
+
+                Assert.Equal(updateDbUser.UpdatedBy, _cacheUserId);
+                Assert.True(updateDbUser.UpdatedAt > DateTime.UtcNow.AddMinutes(-1) && updateDbUser.UpdatedAt < DateTime.UtcNow.AddMinutes(1));
             }
         }
 
@@ -252,7 +268,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var userService = new UserService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var userService = new UserService(dbContext, cacheService, _mapper);
 
                 var userDb = UserHelper.NewDb();
                 await dbContext.Users.AddAsync(userDb);
@@ -276,7 +293,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var userService = new UserService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var userService = new UserService(dbContext, cacheService, _mapper);
 
                 var userDb1 = UserHelper.NewDb(id: 1, username: "user1");
                 var userDb2 = UserHelper.NewDb(id: 2, username: "user2");
@@ -301,7 +319,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var userService = new UserService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var userService = new UserService(dbContext, cacheService, _mapper);
 
                 var userDb = UserHelper.NewDb();
                 await dbContext.Users.AddAsync(userDb);
@@ -325,7 +344,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var userService = new UserService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var userService = new UserService(dbContext, cacheService, _mapper);
 
                 var userDb1 = UserHelper.NewDb(id: 1, username: "user1");
                 var userDb2 = UserHelper.NewDb(id: 2, username: "user2");

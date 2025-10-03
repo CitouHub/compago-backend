@@ -9,7 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NSubstitute;
-using System;
 
 namespace Compago.Test.API
 {
@@ -24,6 +23,8 @@ namespace Compago.Test.API
         public readonly IUserService MockUserService = Substitute.For<IUserService>();
         public readonly ITagService MockTagService = Substitute.For<ITagService>();
         public readonly IInvoiceTagService MockInvoiceTagService = Substitute.For<IInvoiceTagService>();
+
+        private readonly string AuthorizationActiveKey = "Settings:AuthorizationActive";
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -69,6 +70,11 @@ namespace Compago.Test.API
                     .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                     .EnableSensitiveDataLogging();
             });
+        }
+
+        public void SetAuthorizationActive(bool active)
+        {
+            UpdateConfiguration(AuthorizationActiveKey, active == true ? "true" : "false");
         }
 
         public void UpdateConfiguration(string key, string value)

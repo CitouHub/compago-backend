@@ -39,6 +39,7 @@ namespace Compago.Test.API.Controller
                 // Arrange
                 var app = new CompagoAPIMock();
                 var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
 
                 var request = new { name = (string?)null };
                 var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
@@ -59,11 +60,11 @@ namespace Compago.Test.API.Controller
                 // Arrange
                 var app = new CompagoAPIMock();
                 var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
+                app.MockInvoiceTagService.AddInvoiceTagAsync(Arg.Any<InvoiceTagDTO>()).Returns(new InvoiceTagDTO());
 
                 var invoiceTagDto = InvoiceTagHelper.New();
                 var content = new StringContent(JsonConvert.SerializeObject(invoiceTagDto), Encoding.UTF8, "application/json");
-
-                app.MockInvoiceTagService.AddInvoiceTagAsync(Arg.Any<InvoiceTagDTO>()).Returns(new InvoiceTagDTO());
 
                 // Act
                 var response = await client.PostAsync($"{Constants.API_VERSION}/invoicetag", content);
@@ -84,6 +85,7 @@ namespace Compago.Test.API.Controller
                 // Arrange
                 var app = new CompagoAPIMock();
                 var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
 
                 // Act
                 var response = await client.DeleteAsync($"{Constants.API_VERSION}/invoicetag/list/invalid");
@@ -100,11 +102,13 @@ namespace Compago.Test.API.Controller
             {
                 // Arrange
                 var app = new CompagoAPIMock();
+                var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
+
                 var tagId = (short)1;
                 app.MockInvoiceTagService.GetInvoiceTagsAsync(tagId).Returns((List<InvoiceTagDTO>?)null);
-
+                
                 // Act
-                var client = app.CreateClient();
                 var response = await client.GetAsync($"{Constants.API_VERSION}/invoicetag/list/{tagId}");
                 var result = await response.Content.ReadAsStringAsync();
 
@@ -119,11 +123,13 @@ namespace Compago.Test.API.Controller
             {
                 // Arrange
                 var app = new CompagoAPIMock();
+                var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
+
                 var tagId = (short)1;
                 app.MockInvoiceTagService.GetInvoiceTagsAsync(tagId).Returns([new(), new()]);
 
                 // Act
-                var client = app.CreateClient();
                 var response = await client.GetAsync($"{Constants.API_VERSION}/invoicetag/list/{tagId}");
                 var result = await response.Content.ReadFromJsonAsync<List<InvoiceTagDTO>>();
 
@@ -142,6 +148,7 @@ namespace Compago.Test.API.Controller
                 // Arrange
                 var app = new CompagoAPIMock();
                 var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
 
                 // Act
                 var response = await client.DeleteAsync($"{Constants.API_VERSION}/invoicetag/invoiceId/invalid");

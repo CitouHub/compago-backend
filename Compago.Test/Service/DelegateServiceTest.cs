@@ -1,4 +1,5 @@
 ﻿using Compago.Common;
+using Compago.Domain;
 using Compago.Service;
 using Compago.Service.CustomeException;
 using Compago.Service.ExternalSource.GSuite;
@@ -38,6 +39,29 @@ namespace Compago.Test.Service
                 }
 
                 [Fact]
+                public async Task Success_NoDataReturned()
+                {
+                    // Arrange
+                    var gSuiteService = Substitute.For<IGSuiteService>();
+                    var delegateService = new DelegateService(_delegateServiceLogger, gSuiteService, _microsoftAzureService, _currencyService);
+                    var from = new DateTime(2025, 01, 02);
+                    var to = new DateTime(2025, 03, 04);
+
+                    gSuiteService.GetBillingAsync(from, to)
+                        .Returns((BillingDTO?)null);
+
+                    // Act
+                    var result = await delegateService.GetBillingAsync(SupportedExternalSource.GSuite, from, to);
+
+                    // Assert
+                    Assert.Null(result);
+
+                    await gSuiteService.Received(1).GetBillingAsync(from, to);
+                    await _microsoftAzureService.Received(0).GetBillingAsync(Arg.Any<DateTime>(), Arg.Any<DateTime>());
+                    await _currencyService.Received(0).GetExchangeRateAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
+                }
+
+                [Fact]
                 public async Task Success_WithoutInvoices_NoCurrencyConvert()
                 {
                     // Arrange
@@ -56,6 +80,7 @@ namespace Compago.Test.Service
                     // Assert
                     Assert.NotNull(result);
                     Assert.Equal(billing, result);
+                    Assert.Equal(SupportedExternalSource.GSuite, billing.Source);
 
                     await gSuiteService.Received(1).GetBillingAsync(from, to);
                     await _microsoftAzureService.Received(0).GetBillingAsync(Arg.Any<DateTime>(), Arg.Any<DateTime>());
@@ -86,6 +111,7 @@ namespace Compago.Test.Service
 
                     // Assert
                     Assert.NotNull(result);
+                    Assert.Equal(SupportedExternalSource.GSuite, billing.Source);
 
                     await gSuiteService.Received(1).GetBillingAsync(from, to);
                     await _microsoftAzureService.Received(0).GetBillingAsync(Arg.Any<DateTime>(), Arg.Any<DateTime>());
@@ -129,6 +155,7 @@ namespace Compago.Test.Service
                     Assert.NotNull(result);
                     Assert.Equal(toCurrency.ToUpper(), result.Currency);
                     Assert.Equal(fromCurrency.ToUpper(), result.OrigialCurrency);
+                    Assert.Equal(SupportedExternalSource.GSuite, billing.Source);
                     Assert.Equal(billing.Invoices.Count, result.Invoices.Count);
                     Assert.Equal(price1 * exchangeRate1, result.Invoices.First(_ => _.Id == invoice1.Id).Price);
                     Assert.Equal(price2 * exchangeRate2, result.Invoices.First(_ => _.Id == invoice2.Id).Price);
@@ -165,6 +192,29 @@ namespace Compago.Test.Service
                 }
 
                 [Fact]
+                public async Task Success_NoDataReturned()
+                {
+                    // Arrange
+                    var microsoftAzureService = Substitute.For<IMicrosoftAzureService>();
+                    var delegateService = new DelegateService(_delegateServiceLogger, _gSuiteService, microsoftAzureService, _currencyService);
+                    var from = new DateTime(2025, 01, 02);
+                    var to = new DateTime(2025, 03, 04);
+
+                    microsoftAzureService.GetBillingAsync(from, to)
+                        .Returns((BillingDTO?)null);
+
+                    // Act
+                    var result = await delegateService.GetBillingAsync(SupportedExternalSource.MicrosoftAzure, from, to);
+
+                    // Assert
+                    Assert.Null(result);
+
+                    await microsoftAzureService.Received(1).GetBillingAsync(from, to);
+                    await _microsoftAzureService.Received(0).GetBillingAsync(Arg.Any<DateTime>(), Arg.Any<DateTime>());
+                    await _currencyService.Received(0).GetExchangeRateAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
+                }
+
+                [Fact]
                 public async Task Success_WithoutInvoices_NoCurrencyConvert()
                 {
                     // Arrange
@@ -183,6 +233,7 @@ namespace Compago.Test.Service
                     // Assert
                     Assert.NotNull(result);
                     Assert.Equal(billing, result);
+                    Assert.Equal(SupportedExternalSource.MicrosoftAzure, billing.Source);
 
                     await _gSuiteService.Received(0).GetBillingAsync(from, to);
                     await microsoftAzureService.Received(1).GetBillingAsync(Arg.Any<DateTime>(), Arg.Any<DateTime>());
@@ -213,6 +264,7 @@ namespace Compago.Test.Service
 
                     // Assert
                     Assert.NotNull(result);
+                    Assert.Equal(SupportedExternalSource.MicrosoftAzure, billing.Source);
 
                     await _gSuiteService.Received(0).GetBillingAsync(from, to);
                     await microsoftAzureService.Received(1).GetBillingAsync(Arg.Any<DateTime>(), Arg.Any<DateTime>());
@@ -256,6 +308,7 @@ namespace Compago.Test.Service
                     Assert.NotNull(result);
                     Assert.Equal(toCurrency.ToUpper(), result.Currency);
                     Assert.Equal(fromCurrency.ToUpper(), result.OrigialCurrency);
+                    Assert.Equal(SupportedExternalSource.MicrosoftAzure, billing.Source);
                     Assert.Equal(billing.Invoices.Count, result.Invoices.Count);
                     Assert.Equal(price1 * exchangeRate1, result.Invoices.First(_ => _.Id == invoice1.Id).Price);
                     Assert.Equal(price2 * exchangeRate2, result.Invoices.First(_ => _.Id == invoice2.Id).Price);

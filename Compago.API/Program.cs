@@ -66,7 +66,9 @@ var mappingConfig = new MapperConfiguration(config =>
     ]);
 }, logger);
 var mapper = mappingConfig.CreateMapper();
+
 builder.Services.AddSingleton(mapper);
+builder.Services.AddSingleton<ICacheService, CacheService>();
 
 builder.Services.AddScoped<IDelegateService, DelegateService>();
 builder.Services.AddScoped<ICurrencyService, CurrencyService>();

@@ -17,7 +17,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var tagService = new TagService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var tagService = new TagService(dbContext, cacheService, _mapper);
 
                 var name = "TestTag";
                 var tagDb = TagHelper.NewDb(name: name);
@@ -42,7 +43,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var tagService = new TagService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var tagService = new TagService(dbContext, cacheService, _mapper);
 
                 var tag = TagHelper.New(id: null);
 
@@ -53,6 +55,8 @@ namespace Compago.Test.Service
                 var dbTag = await dbContext.Tags.FirstOrDefaultAsync(_ => _.Id == 1);
                 Assert.NotNull(dbTag);
                 Assert.Equal(DefaultValues.TagColor, dbTag.Color);
+                Assert.Equal(dbTag.CreatedBy, _cacheUserId);
+                Assert.True(dbTag.CreatedAt > DateTime.UtcNow.AddMinutes(-1) && dbTag.CreatedAt < DateTime.UtcNow.AddMinutes(1));
             }
         }
 
@@ -63,7 +67,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var tagService = new TagService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var tagService = new TagService(dbContext, cacheService, _mapper);
 
                 // Act
                 var result = await tagService.GetTagsAsync();
@@ -77,7 +82,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var tagService = new TagService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var tagService = new TagService(dbContext, cacheService, _mapper);
 
                 var tag1 = TagHelper.NewDb(id: 1, name: "Tag1");
                 var tag2 = TagHelper.NewDb(id: 2, name: "Tag2");
@@ -100,7 +106,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var tagService = new TagService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var tagService = new TagService(dbContext, cacheService, _mapper);
 
                 var dbTag = TagHelper.NewDb();
                 await dbContext.Tags.AddRangeAsync(dbTag);
@@ -128,7 +135,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var tagService = new TagService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var tagService = new TagService(dbContext, cacheService, _mapper);
 
                 var tagDb = TagHelper.NewDb();
                 await dbContext.Tags.AddAsync(tagDb);
@@ -152,7 +160,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var tagService = new TagService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var tagService = new TagService(dbContext, cacheService, _mapper);
 
                 var tagDb1 = TagHelper.NewDb(id: 1, name: "tag1");
                 var tagDb2 = TagHelper.NewDb(id: 2, name: "tag2");
@@ -174,7 +183,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var tagService = new TagService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var tagService = new TagService(dbContext, cacheService, _mapper);
 
                 var dbTag = TagHelper.NewDb();
                 await dbContext.Tags.AddRangeAsync(dbTag);
@@ -202,7 +212,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var tagService = new TagService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var tagService = new TagService(dbContext, cacheService, _mapper);
 
                 var tagDb = TagHelper.NewDb();
                 await dbContext.Tags.AddAsync(tagDb);
@@ -226,7 +237,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var tagService = new TagService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var tagService = new TagService(dbContext, cacheService, _mapper);
 
                 var tagDb1 = TagHelper.NewDb(id: 1, name: "tag1");
                 var tagDb2 = TagHelper.NewDb(id: 2, name: "tag2");
@@ -251,7 +263,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var tagService = new TagService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var tagService = new TagService(dbContext, cacheService, _mapper);
 
                 var tagDb1 = TagHelper.NewDb(id: 1, name: "tag1", color: "#001122");
                 var tagDb2 = TagHelper.NewDb(id: 2, name: "tag2", color: "#334455");
@@ -274,6 +287,9 @@ namespace Compago.Test.Service
                 Assert.NotNull(updateDbTag);
                 Assert.Equal(newName, updateDbTag.Name);
                 Assert.Equal(newColor, updateDbTag.Color);
+
+                Assert.Equal(updateDbTag.CreatedBy, _cacheUserId);
+                Assert.True(updateDbTag.CreatedAt > DateTime.UtcNow.AddMinutes(-1) && updateDbTag.CreatedAt < DateTime.UtcNow.AddMinutes(1));
             }
         }
 
@@ -284,7 +300,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var tagService = new TagService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var tagService = new TagService(dbContext, cacheService, _mapper);
 
                 var tagDb = TagHelper.NewDb();
                 await dbContext.Tags.AddAsync(tagDb);
@@ -308,7 +325,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var tagService = new TagService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var tagService = new TagService(dbContext, cacheService, _mapper);
 
                 var tagDb1 = TagHelper.NewDb(id: 1, name: "tag1");
                 var tagDb2 = TagHelper.NewDb(id: 2, name: "tag2");
@@ -330,7 +348,8 @@ namespace Compago.Test.Service
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
-                var tagService = new TagService(dbContext, _mapper);
+                var cacheService = GetCacheService();
+                var tagService = new TagService(dbContext, cacheService, _mapper);
 
                 var dbTag = TagHelper.NewDb();
                 await dbContext.Tags.AddRangeAsync(dbTag);

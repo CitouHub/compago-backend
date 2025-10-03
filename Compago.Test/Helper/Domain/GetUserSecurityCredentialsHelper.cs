@@ -3,16 +3,17 @@ using Compago.Domain;
 
 namespace Compago.Test.Helper.Domain
 {
-    public static class GetUserSecurityCredentialsHelper
+    public static class UserSecurityCredentialsHelper
     {
         public static UserSecurityCredentialsDTO New(
-                Role roleId = Role.Admin,
-                string passwordHash = "passwordHash",
-                string passwordHashSalt = "PasswordHashSalt"
-            )
+            int id = 1,
+            Role roleId = Role.Admin,
+            string passwordHash = "passwordHash",
+            string passwordHashSalt = "PasswordHashSalt")
         {
             return new UserSecurityCredentialsDTO()
             {
+                Id = id,
                 RoleId = roleId,
                 PasswordHash = passwordHash,
                 PasswordHashSalt = passwordHashSalt

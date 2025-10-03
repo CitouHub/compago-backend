@@ -23,6 +23,8 @@
             }
         }
 
+        public Common.SupportedExternalSource Source { get; set; }
+
         public List<InvoiceDTO> Invoices { get; set; } = [];
     }
 }

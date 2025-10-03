@@ -18,6 +18,7 @@ namespace Compago.Service
 
     public class TagService(
         CompagoDbContext dbContext,
+        ICacheService cacheService,
         IMapper mapper) : ITagService
     {
         public async Task<TagDTO> AddTagAsync(TagDTO tagDto)
@@ -28,7 +29,11 @@ namespace Compago.Service
                 var tagExists = await dbContext.Tags.AnyAsync(_ => _.Name == tagDto.Name);
                 if (tagExists == false)
                 {
+                    var userSecurityCredentials = cacheService.Get<UserSecurityCredentialsDTO>();
+
                     var dbTag = mapper.Map<Tag>(tagDto);
+                    dbTag.CreatedAt = DateTime.UtcNow;
+                    dbTag.CreatedBy = userSecurityCredentials!.Id;
                     await dbContext.Tags.AddAsync(dbTag);
                     await dbContext.SaveChangesAsync();
 
@@ -93,10 +98,14 @@ namespace Compago.Service
                 var otherTagExists = await dbContext.Tags.AnyAsync(_ => _.Name == tagDto.Name && _.Id != tagDto.Id);
                 if (otherTagExists == false)
                 {
-                        mapper.Map(tagDto, dbTag);
-                        await dbContext.SaveChangesAsync();
+                    var userSecurityCredentials = cacheService.Get<UserSecurityCredentialsDTO>();
 
-                        return mapper.Map<TagDTO>(dbTag);
+                    mapper.Map(tagDto, dbTag);
+                    dbTag.CreatedAt = DateTime.UtcNow;
+                    dbTag.CreatedBy = userSecurityCredentials!.Id;
+                    await dbContext.SaveChangesAsync();
+
+                    return mapper.Map<TagDTO>(dbTag);
                 }
                 else
                 {
