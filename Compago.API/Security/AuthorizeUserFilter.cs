@@ -26,34 +26,27 @@ namespace Compago.API.Security
                     try
                     {
                         var userSecurityCredentials = userService.GetUserSecurityCredentialsAsync(username).Result;
-                        if (userSecurityCredentials != null)
+                        if (roles == null || roles.Contains(userSecurityCredentials.RoleId) == true)
                         {
-                            if (roles == null || roles.Contains(userSecurityCredentials.RoleId) == true)
-                            {
-                                var valid = PasswordHandler.ValidatePassword(
-                                    password, 
-                                    userSecurityCredentials.PasswordHash,
-                                    userSecurityCredentials.PasswordHashSalt);
+                            var valid = PasswordHandler.ValidatePassword(
+                                password,
+                                userSecurityCredentials.PasswordHash,
+                                userSecurityCredentials.PasswordHashSalt);
 
-                                if (valid == false)
-                                {
-                                    throw new UnauthorizedAccessException();
-                                }
-                                else
-                                {
-                                    cacheService.Set<UserSecurityCredentialsDTO>(userSecurityCredentials);
-                                }
+                            if (valid == false)
+                            {
+                                throw new UnauthorizedAccessException();
                             }
                             else
                             {
-                                throw new UnauthorizedAccessException();
+                                cacheService.Set<UserSecurityCredentialsDTO>(userSecurityCredentials);
                             }
                         }
                         else
                         {
                             throw new UnauthorizedAccessException();
                         }
-                    } 
+                    }
                     catch
                     {
                         throw new UnauthorizedAccessException();
