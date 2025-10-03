@@ -8,9 +8,8 @@ namespace Compago.Service
 {
     public interface IInvoiceTagService
     {
-        Task<InvoiceTagDTO> AddInvoiceTagAsync(InvoiceTagDTO invoiceTagDto);
+        Task<List<InvoiceTagDTO>?> UpdateInvoiceTagAsync(string invoiceId, List<short> tagIds);
         Task<List<InvoiceTagDTO>?> GetInvoiceTagsAsync(string invoiceId);
-        Task DeleteInvoiceTagAsync(string invoiceId, short tagId);
     }
 
     public class InvoiceTagService(
@@ -18,55 +17,46 @@ namespace Compago.Service
         ICacheService cacheService,
         IMapper mapper) : IInvoiceTagService
     {
-        public async Task<InvoiceTagDTO> AddInvoiceTagAsync(InvoiceTagDTO invoiceTagDto)
+        public async Task<List<InvoiceTagDTO>?> UpdateInvoiceTagAsync(string invoiceId, List<short> tagIds)
         {
-            var tagExists = await dbContext.Tags.AnyAsync(_ => _.Id == invoiceTagDto.TagId);
-            if (tagExists == true)
+            var requestTags = await dbContext.Tags
+                .Where(_ => tagIds.Contains(_.Id) == true)
+                .Select(_ => _.Id)
+                .ToListAsync();
+            if (requestTags.Count == tagIds.Count)
             {
-                var invoiceTagExists = await dbContext.InvoiceTags.AnyAsync(_ => _.TagId == invoiceTagDto.TagId && _.InvoiceId == invoiceTagDto.InvoiceId);
-                if (invoiceTagExists == false)
-                {
-                    var userSecurityCredentials = cacheService.Get<UserSecurityCredentialsDTO>();
-
-                    var dbInvoiceTag = mapper.Map<InvoiceTag>(invoiceTagDto);
-                    dbInvoiceTag.CreatedAt = DateTime.UtcNow;
-                    dbInvoiceTag.CreatedBy = userSecurityCredentials!.Id;
-                    await dbContext.InvoiceTags.AddAsync(dbInvoiceTag);
-                    await dbContext.SaveChangesAsync();
-
-                    var addedDbInvoiceTag = dbContext.InvoiceTags
-                        .Include(_ => _.Tag)
-                        .FirstOrDefaultAsync(_ => _.TagId == invoiceTagDto.TagId && _.InvoiceId == invoiceTagDto.InvoiceId);
-
-                    return mapper.Map<InvoiceTagDTO>(dbInvoiceTag);
-                }
-                else
-                {
-                    throw new ServiceException(ExceptionType.ItemAlreadyExist, details: @$"{nameof(InvoiceTag)} with 
-                        {nameof(InvoiceTag.InvoiceId)} = {invoiceTagDto.InvoiceId} and
-                        {nameof(InvoiceTag.TagId)} = {invoiceTagDto.TagId} already exists");
-                }
-            }
-            else
-            {
-                throw new ServiceException(ExceptionType.ItemNotFound, details: @$"{nameof(Tag)} with 
-                    {nameof(Tag.Id)} = {invoiceTagDto.TagId} not found");
-            }
-        }
-
-        public async Task DeleteInvoiceTagAsync(string invoiceId, short tagId)
-        {
-            var dbInvoiceTag = await dbContext.InvoiceTags.FirstOrDefaultAsync(_ => _.InvoiceId == invoiceId && _.TagId == tagId);
-            if (dbInvoiceTag != null)
-            {
-                dbContext.InvoiceTags.Remove(dbInvoiceTag);
+                var currentTags = await dbContext.InvoiceTags.Where(_ => _.InvoiceId == invoiceId).ToListAsync();
+                dbContext.InvoiceTags.RemoveRange(currentTags);
                 await dbContext.SaveChangesAsync();
+
+                var userSecurityCredentials = cacheService.Get<UserSecurityCredentialsDTO>();
+
+                var dbInvoiceTags = new List<InvoiceTag>();
+                foreach (var tagId in tagIds)
+                {
+                    dbInvoiceTags.Add(new InvoiceTag()
+                    {
+                        CreatedAt = DateTime.UtcNow,
+                        CreatedBy = userSecurityCredentials!.Id,
+                        InvoiceId = invoiceId,
+                        TagId = tagId,
+                    });
+                }
+                await dbContext.InvoiceTags.AddRangeAsync(dbInvoiceTags);
+                await dbContext.SaveChangesAsync();
+
+                var addedDbInvoiceTags = await dbContext.InvoiceTags
+                    .Include(_ => _.Tag)
+                    .Where(_ => _.InvoiceId == invoiceId && tagIds.Contains(_.TagId))
+                    .ToListAsync();
+
+                return addedDbInvoiceTags.Count > 0 ? mapper.Map<List<InvoiceTagDTO>>(addedDbInvoiceTags) : null;
             }
             else
             {
-                throw new ServiceException(ExceptionType.ItemNotFound, details: @$"{nameof(InvoiceTag)} with 
-                    {nameof(InvoiceTag.InvoiceId)} = {invoiceId} and
-                    {nameof(InvoiceTag.TagId)} = {tagId} not found");
+                var noneExistingIds = tagIds.Where(_ => requestTags.Contains(_) == false).ToList();
+                throw new ServiceException(ExceptionType.ItemNotFound, details: @$"{nameof(Tag)} with 
+                    {nameof(Tag.Id)}(s) = {string.Join(", ", noneExistingIds.Select(_ => _.ToString()))} not found");
             }
         }
 

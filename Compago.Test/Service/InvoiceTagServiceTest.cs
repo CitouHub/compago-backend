@@ -9,7 +9,7 @@ namespace Compago.Test.Service
 {
     public class InvoiceTagServiceTest : ServiceTest
     {
-        public class AddInvoiceTag
+        public class UpdateInvoiceTag
         {
             [Fact]
             public async Task TagNotFound()
@@ -22,60 +22,21 @@ namespace Compago.Test.Service
                 var dbTag = TagHelper.NewDb();
                 await dbContext.Tags.AddAsync(dbTag);
                 await dbContext.SaveChangesAsync();
-
-                var invoiceTag = InvoiceTagHelper.New(tagId: (short)(dbTag.Id + 1));
+                var invalidTagId = (short)(dbTag.Id + 1);
 
                 // Act
                 var exception = await Assert.ThrowsAsync<ServiceException>(() =>
-                    invoiceTagService.AddInvoiceTagAsync(invoiceTag));
+                    invoiceTagService.UpdateInvoiceTagAsync("1", [invalidTagId]));
 
                 // Assert
                 Assert.Equal(ExceptionType.ItemNotFound, exception.ExceptionType);
                 Assert.Contains(nameof(Tag), exception.Message);
                 Assert.Contains(nameof(Tag.Id), exception.Message);
-                Assert.Contains(invoiceTag.TagId.ToString(), exception.Message);
+                Assert.Contains(invalidTagId.ToString(), exception.Message);
             }
 
             [Fact]
-            public async Task InvoiceTagExists()
-            {
-                // Arrange
-                var dbContext = await DatabaseHelper.GetContextAsync();
-                var cacheService = GetCacheService();
-                var invoiceTagService = new InvoiceTagService(dbContext, cacheService, _mapper);
-
-                var dbTag = TagHelper.NewDb();
-                await dbContext.Tags.AddAsync(dbTag);
-
-                var dbInvoiceTag = InvoiceTagHelper.NewDb(tagId: dbTag.Id);
-                await dbContext.InvoiceTags.AddAsync(dbInvoiceTag);
-                await dbContext.SaveChangesAsync();
-
-                var invoiceTag = InvoiceTagHelper.New(tagId: dbInvoiceTag.TagId);
-
-                // Act
-                var exception = await Assert.ThrowsAsync<ServiceException>(() =>
-                    invoiceTagService.AddInvoiceTagAsync(invoiceTag));
-
-                // Assert
-                Assert.Equal(ExceptionType.ItemAlreadyExist, exception.ExceptionType);
-                Assert.Contains(nameof(InvoiceTag), exception.Message);
-                Assert.Contains(nameof(InvoiceTag.InvoiceId), exception.Message);
-                Assert.Contains(nameof(InvoiceTag.TagId), exception.Message);
-                Assert.Contains(invoiceTag.InvoiceId, exception.Message);
-                Assert.Contains(invoiceTag.TagId.ToString(), exception.Message);
-            }
-
-            [Theory]
-            [InlineData("i1", 1, "i2", 1)]
-            [InlineData("i1", 1, "i1", 2)]
-            [InlineData("i1", 2, "i2", 2)]
-            [InlineData("i1", 2, "i1", 1)]
-            [InlineData("i2", 1, "i1", 1)]
-            [InlineData("i2", 1, "i2", 2)]
-            [InlineData("i2", 2, "i1", 2)]
-            [InlineData("i2", 2, "i2", 1)]
-            public async Task Success(string givenInvoiceId, short givenTagId, string existingInvoiceId, short existingTagId)
+            public async Task OneTagNotFound()
             {
                 // Arrange
                 var dbContext = await DatabaseHelper.GetContextAsync();
@@ -85,21 +46,83 @@ namespace Compago.Test.Service
                 var dbTag1 = TagHelper.NewDb(id: 1);
                 var dbTag2 = TagHelper.NewDb(id: 2);
                 await dbContext.Tags.AddRangeAsync(dbTag1, dbTag2);
-
-                var dbInvoiceTag = InvoiceTagHelper.NewDb(invoiceId: existingInvoiceId, tagId: existingTagId);
-                await dbContext.InvoiceTags.AddAsync(dbInvoiceTag);
                 await dbContext.SaveChangesAsync();
-
-                var invoiceTag = InvoiceTagHelper.New(invoiceId: givenInvoiceId, tagId: givenTagId);
+                var invalidTagId = (short)(dbTag2.Id + 1);
 
                 // Act
-                var result = await invoiceTagService.AddInvoiceTagAsync(invoiceTag);
+                var exception = await Assert.ThrowsAsync<ServiceException>(() =>
+                    invoiceTagService.UpdateInvoiceTagAsync("1", [dbTag1.Id, invalidTagId]));
 
                 // Assert
-                var addedDbInvoiceTag = await dbContext.InvoiceTags.FirstOrDefaultAsync(_ => _.InvoiceId == givenInvoiceId && _.TagId == givenTagId);
-                Assert.NotNull(addedDbInvoiceTag);
-                Assert.Equal(addedDbInvoiceTag.CreatedBy, _cacheUserId);
-                Assert.True(addedDbInvoiceTag.CreatedAt > DateTime.UtcNow.AddMinutes(-1) && addedDbInvoiceTag.CreatedAt < DateTime.UtcNow.AddMinutes(1));
+                Assert.Equal(ExceptionType.ItemNotFound, exception.ExceptionType);
+                Assert.Contains(nameof(Tag), exception.Message);
+                Assert.Contains(nameof(Tag.Id), exception.Message);
+                Assert.Contains(invalidTagId.ToString(), exception.Message);
+                Assert.DoesNotContain(dbTag1.Id.ToString(), exception.Message);
+            }
+
+            [Fact]
+            public async Task Success_WithoutInvoiceTags()
+            {
+                // Arrange
+                var dbContext = await DatabaseHelper.GetContextAsync();
+                var cacheService = GetCacheService();
+                var invoiceTagService = new InvoiceTagService(dbContext, cacheService, _mapper);
+
+                var dbTag1 = TagHelper.NewDb(id: 1);
+                var dbTag2 = TagHelper.NewDb(id: 2);
+                var dbTag3 = TagHelper.NewDb(id: 3);
+                await dbContext.Tags.AddRangeAsync(dbTag1, dbTag2, dbTag3);
+                await dbContext.SaveChangesAsync();
+
+                var invoiceId = "1";
+                var tagIds = new List<short>() { dbTag1.Id, dbTag3.Id };
+
+                // Act
+                var result = await invoiceTagService.UpdateInvoiceTagAsync(invoiceId, tagIds);
+
+                // Assert
+                var addedDbInvoiceTags = await dbContext.InvoiceTags.Where(_ => _.InvoiceId == invoiceId).ToListAsync();
+                Assert.NotNull(addedDbInvoiceTags);
+                Assert.Equal(2, addedDbInvoiceTags.Count);
+                Assert.NotNull(addedDbInvoiceTags.FirstOrDefault(_ => _.TagId == dbTag1.Id));
+                Assert.NotNull(addedDbInvoiceTags.FirstOrDefault(_ => _.TagId == dbTag3.Id));
+                Assert.True(addedDbInvoiceTags.All(_ => _.CreatedBy == _cacheUserId));
+                Assert.True(addedDbInvoiceTags.All(_ => _.CreatedAt > DateTime.UtcNow.AddMinutes(-1) && _.CreatedAt < DateTime.UtcNow.AddMinutes(1)));
+            }
+
+            [Fact]
+            public async Task Success_WithInvoiceTags()
+            {
+                // Arrange
+                var dbContext = await DatabaseHelper.GetContextAsync();
+                var cacheService = GetCacheService();
+                var invoiceTagService = new InvoiceTagService(dbContext, cacheService, _mapper);
+
+                var dbTag1 = TagHelper.NewDb(id: 1);
+                var dbTag2 = TagHelper.NewDb(id: 2);
+                var dbTag3 = TagHelper.NewDb(id: 3);
+                await dbContext.Tags.AddRangeAsync(dbTag1, dbTag2, dbTag3);
+
+                var invoiceId = "1";
+                var dbInvoiceTag1 = InvoiceTagHelper.NewDb(invoiceId, dbTag2.Id);
+                var dbInvoiceTag2 = InvoiceTagHelper.NewDb(invoiceId, dbTag3.Id);
+                await dbContext.InvoiceTags.AddRangeAsync(dbInvoiceTag1, dbInvoiceTag1);
+                await dbContext.SaveChangesAsync();
+
+                var tagIds = new List<short>() { dbTag1.Id, dbTag3.Id };
+
+                // Act
+                var result = await invoiceTagService.UpdateInvoiceTagAsync(invoiceId, tagIds);
+
+                // Assert
+                var addedDbInvoiceTags = await dbContext.InvoiceTags.Where(_ => _.InvoiceId == invoiceId).ToListAsync();
+                Assert.NotNull(addedDbInvoiceTags);
+                Assert.Equal(2, addedDbInvoiceTags.Count);
+                Assert.NotNull(addedDbInvoiceTags.FirstOrDefault(_ => _.TagId == dbTag1.Id));
+                Assert.NotNull(addedDbInvoiceTags.FirstOrDefault(_ => _.TagId == dbTag3.Id));
+                Assert.True(addedDbInvoiceTags.All(_ => _.CreatedBy == _cacheUserId));
+                Assert.True(addedDbInvoiceTags.All(_ => _.CreatedAt > DateTime.UtcNow.AddMinutes(-1) && _.CreatedAt < DateTime.UtcNow.AddMinutes(1)));
             }
         }
 
@@ -156,65 +179,6 @@ namespace Compago.Test.Service
                 Assert.NotNull(invoiceTag2);
                 Assert.Equal(dbTag2.Name, invoiceTag2.TagName);
                 Assert.Equal(dbTag2.Color, invoiceTag2.TagColor);
-            }
-        }
-
-        public class DeleteInvoiceTag
-        {
-            [Theory]
-            [InlineData("i1", 1, "i2", 1)]
-            [InlineData("i1", 1, "i1", 2)]
-            public async Task InvoiceTagNotFound(string givenInvoiceId, short givenTagId, string existingInvoiceId, short existingTagId)
-            {
-                // Arrange
-                var dbContext = await DatabaseHelper.GetContextAsync();
-                var cacheService = GetCacheService();
-                var invoiceTagService = new InvoiceTagService(dbContext, cacheService, _mapper);
-
-                var dbTag = TagHelper.NewDb(id: existingTagId);
-                await dbContext.Tags.AddAsync(dbTag);
-
-                var invoiceTagDb = InvoiceTagHelper.NewDb(invoiceId: existingInvoiceId, tagId: dbTag.Id);
-                await dbContext.InvoiceTags.AddAsync(invoiceTagDb);
-                await dbContext.SaveChangesAsync();
-
-                // Act
-                var exception = await Assert.ThrowsAsync<ServiceException>(() =>
-                    invoiceTagService.DeleteInvoiceTagAsync(givenInvoiceId, givenTagId));
-
-                // Assert
-                Assert.Equal(ExceptionType.ItemNotFound, exception.ExceptionType);
-                Assert.Contains(nameof(InvoiceTag), exception.Message);
-                Assert.Contains(nameof(InvoiceTag.InvoiceId), exception.Message);
-                Assert.Contains(nameof(InvoiceTag.TagId), exception.Message);
-                Assert.Contains(givenInvoiceId, exception.Message);
-                Assert.Contains(givenTagId.ToString(), exception.Message);
-            }
-
-            [Fact]
-            public async Task Success()
-            {
-                // Arrange
-                var dbContext = await DatabaseHelper.GetContextAsync();
-                var cacheService = GetCacheService();
-                var invoiceTagService = new InvoiceTagService(dbContext, cacheService, _mapper);
-
-                var dbTag = TagHelper.NewDb();
-                await dbContext.Tags.AddAsync(dbTag);
-
-                var dbInvoiceTag1 = InvoiceTagHelper.NewDb(invoiceId: "1", tagId: dbTag.Id);
-                var dbInvoiceTag2 = InvoiceTagHelper.NewDb(invoiceId: "2", tagId: dbTag.Id);
-                await dbContext.InvoiceTags.AddRangeAsync(dbInvoiceTag1, dbInvoiceTag2);
-                await dbContext.SaveChangesAsync();
-
-                // Act
-                await invoiceTagService.DeleteInvoiceTagAsync(dbInvoiceTag2.InvoiceId, dbInvoiceTag2.TagId);
-
-                // Assert
-                var deletedDbInvoiceTag1 = await dbContext.InvoiceTags.FirstOrDefaultAsync(_ => _.InvoiceId == dbInvoiceTag2.InvoiceId && _.TagId == dbTag.Id);
-                var noneDeletedDbInvoiceTag1 = await dbContext.InvoiceTags.FirstOrDefaultAsync(_ => _.InvoiceId == dbInvoiceTag1.InvoiceId && _.TagId == dbTag.Id);
-                Assert.Null(deletedDbInvoiceTag1);
-                Assert.NotNull(noneDeletedDbInvoiceTag1);
             }
         }
     }

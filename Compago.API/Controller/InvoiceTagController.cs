@@ -15,13 +15,13 @@ namespace Compago.API.Controller
         ILogger<InvoiceTagController> logger,
         IInvoiceTagService invoiceTagService) : ControllerBase
     {
-        [HttpPost("")]
-        public async Task<ActionResult<InvoiceTagDTO>> AddInvoiceTagAsync([FromBody] InvoiceTagDTO invoiceTagDto)
+        [HttpPost("{invoiceId}")]
+        public async Task<ActionResult<List<InvoiceTagDTO>>> UpdateInvoiceTagAsync(string invoiceId, [FromBody] List<short> tagIds)
         {
             logger.LogDebug("{message}", @$"Call to 
                 {nameof(ControllerContext.ActionDescriptor.ActionName)}");
 
-            return Ok(await invoiceTagService.AddInvoiceTagAsync(invoiceTagDto));
+            return Ok(await invoiceTagService.UpdateInvoiceTagAsync(invoiceId, tagIds));
         }
 
         [HttpGet("list/{invoiceId}")]
@@ -31,16 +31,6 @@ namespace Compago.API.Controller
                 {nameof(ControllerContext.ActionDescriptor.ActionName)}");
 
             return Ok(await invoiceTagService.GetInvoiceTagsAsync(invoiceId));
-        }
-
-        [HttpDelete("{invoiceId}/{tagId}")]
-        public async Task<ActionResult<InvoiceTagDTO>> DeleteInvoiceTagAsync(string invoiceId, short tagId)
-        {
-            logger.LogDebug("{message}", @$"Call to 
-                {nameof(ControllerContext.ActionDescriptor.ActionName)}");
-
-            await invoiceTagService.DeleteInvoiceTagAsync(invoiceId, tagId);
-            return Ok();
         }
     }
 }
