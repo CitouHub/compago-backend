@@ -74,7 +74,6 @@ namespace Compago.Test.API.Controller
 
                 // Act
                 var response = await client.PostAsync($"{Constants.API_VERSION}/user", content);
-                var asdf = response.RequestMessage.RequestUri;
                 var result = await response.Content.ReadFromJsonAsync<UserDTO>();
 
                 // Assert
