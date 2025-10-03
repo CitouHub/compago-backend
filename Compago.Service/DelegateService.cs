@@ -20,7 +20,8 @@ namespace Compago.Service
         ILogger<DelegateService> logger,
         IGSuiteService gSuiteService,
         IMicrosoftAzureService microsoftAzureService,
-        ICurrencyService currencyService) : IDelegateService
+        ICurrencyService currencyService,
+        IInvoiceTagService invoiceTagService) : IDelegateService
     {
         public async Task<BillingDTO?> GetBillingAsync(
             SupportedExternalSource supportedExternalSource,
@@ -42,18 +43,21 @@ namespace Compago.Service
 
             if (billing != null)
             {
-                if (currency != null && currency.Replace(" ", "").Length > 0)
+                foreach (var invoice in billing.Invoices)
                 {
-                    foreach (var invoice in billing.Invoices)
+                    if (currency != null && currency.Replace(" ", "").Length > 0)
                     {
                         var exchangeRate = await currencyService.GetExchangeRateAsync(billing.Currency, currency, invoice.Date);
                         invoice.Price = Math.Round(invoice.Price * exchangeRate, 2);
                         invoice.ExchangeRate = exchangeRate;
-                    }
+                    }         
 
-                    billing.OrigialCurrency = billing.Currency;
-                    billing.Currency = currency;
+                    var invoiceTags = await invoiceTagService.GetInvoiceTagsAsync(invoice.Id);
+                    invoice.InvoiceTags = invoiceTags ?? [];
                 }
+
+                billing.OrigialCurrency = currency != null ? billing.Currency : null;
+                billing.Currency = currency ?? billing.Currency;
                 billing.Source = supportedExternalSource;
             }
 

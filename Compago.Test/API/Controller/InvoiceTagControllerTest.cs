@@ -105,17 +105,17 @@ namespace Compago.Test.API.Controller
                 var client = app.CreateClient();
                 app.SetAuthorizationActive(false);
 
-                var tagId = (short)1;
-                app.MockInvoiceTagService.GetInvoiceTagsAsync(tagId).Returns((List<InvoiceTagDTO>?)null);
+                var invoiceId= "1";
+                app.MockInvoiceTagService.GetInvoiceTagsAsync(invoiceId).Returns((List<InvoiceTagDTO>?)null);
                 
                 // Act
-                var response = await client.GetAsync($"{Constants.API_VERSION}/invoicetag/list/{tagId}");
+                var response = await client.GetAsync($"{Constants.API_VERSION}/invoicetag/list/{invoiceId}");
                 var result = await response.Content.ReadAsStringAsync();
 
                 // Assert
                 Assert.True(string.IsNullOrEmpty(result));
                 Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-                await app.MockInvoiceTagService.Received(1).GetInvoiceTagsAsync(tagId);
+                await app.MockInvoiceTagService.Received(1).GetInvoiceTagsAsync(invoiceId);
             }
 
             [Fact]
@@ -126,17 +126,17 @@ namespace Compago.Test.API.Controller
                 var client = app.CreateClient();
                 app.SetAuthorizationActive(false);
 
-                var tagId = (short)1;
-                app.MockInvoiceTagService.GetInvoiceTagsAsync(tagId).Returns([new(), new()]);
+                var invoiceId = "1";
+                app.MockInvoiceTagService.GetInvoiceTagsAsync(invoiceId).Returns([new(), new()]);
 
                 // Act
-                var response = await client.GetAsync($"{Constants.API_VERSION}/invoicetag/list/{tagId}");
+                var response = await client.GetAsync($"{Constants.API_VERSION}/invoicetag/list/{invoiceId}");
                 var result = await response.Content.ReadFromJsonAsync<List<InvoiceTagDTO>>();
 
                 // Assert
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
                 Assert.Equal(2, result?.Count);
-                await app.MockInvoiceTagService.Received(1).GetInvoiceTagsAsync(tagId);
+                await app.MockInvoiceTagService.Received(1).GetInvoiceTagsAsync(invoiceId);
             }
         }
 

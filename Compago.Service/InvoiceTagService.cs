@@ -9,7 +9,7 @@ namespace Compago.Service
     public interface IInvoiceTagService
     {
         Task<InvoiceTagDTO> AddInvoiceTagAsync(InvoiceTagDTO invoiceTagDto);
-        Task<List<InvoiceTagDTO>?> GetInvoiceTagsAsync(int tagId);
+        Task<List<InvoiceTagDTO>?> GetInvoiceTagsAsync(string invoiceId);
         Task DeleteInvoiceTagAsync(string invoiceId, short tagId);
     }
 
@@ -33,6 +33,10 @@ namespace Compago.Service
                     dbInvoiceTag.CreatedBy = userSecurityCredentials!.Id;
                     await dbContext.InvoiceTags.AddAsync(dbInvoiceTag);
                     await dbContext.SaveChangesAsync();
+
+                    var addedDbInvoiceTag = dbContext.InvoiceTags
+                        .Include(_ => _.Tag)
+                        .FirstOrDefaultAsync(_ => _.TagId == invoiceTagDto.TagId && _.InvoiceId == invoiceTagDto.InvoiceId);
 
                     return mapper.Map<InvoiceTagDTO>(dbInvoiceTag);
                 }
@@ -66,9 +70,9 @@ namespace Compago.Service
             }
         }
 
-        public async Task<List<InvoiceTagDTO>?> GetInvoiceTagsAsync(int tagId)
+        public async Task<List<InvoiceTagDTO>?> GetInvoiceTagsAsync(string invoiceId)
         {
-            var invoiceTags = await dbContext.InvoiceTags.Where(_ => _.TagId == tagId).ToListAsync();
+            var invoiceTags = await dbContext.InvoiceTags.Include(_ => _.Tag).Where(_ => _.InvoiceId == invoiceId).ToListAsync();
             return invoiceTags.Count != 0 ? mapper.Map<List<InvoiceTagDTO>>(invoiceTags) : null;
         }
     }

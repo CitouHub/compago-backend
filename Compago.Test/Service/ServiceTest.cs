@@ -29,6 +29,7 @@ namespace Compago.Test.Service
         protected static readonly IGSuiteService _gSuiteService = Substitute.For<IGSuiteService>();
         protected static readonly IMicrosoftAzureService _microsoftAzureService = Substitute.For<IMicrosoftAzureService>();
         protected static readonly ICurrencyService _currencyService = Substitute.For<ICurrencyService>();
+        protected static readonly IInvoiceTagService _invoiceTagService = Substitute.For<IInvoiceTagService>();
 
         protected static readonly int _cacheUserId = 999;
 

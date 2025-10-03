@@ -24,13 +24,13 @@ namespace Compago.API.Controller
             return Ok(await invoiceTagService.AddInvoiceTagAsync(invoiceTagDto));
         }
 
-        [HttpGet("list/{tagId}")]
-        public async Task<ActionResult<List<InvoiceTagDTO>>> GetInvoiceTagsAsync(int tagId)
+        [HttpGet("list/{invoiceId}")]
+        public async Task<ActionResult<List<InvoiceTagDTO>>> GetInvoiceTagsAsync(string invoiceId)
         {
             logger.LogDebug("{message}", @$"Call to 
                 {nameof(ControllerContext.ActionDescriptor.ActionName)}");
 
-            return Ok(await invoiceTagService.GetInvoiceTagsAsync(tagId));
+            return Ok(await invoiceTagService.GetInvoiceTagsAsync(invoiceId));
         }
 
         [HttpDelete("{invoiceId}/{tagId}")]

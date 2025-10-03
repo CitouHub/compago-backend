@@ -20,7 +20,11 @@ namespace Compago.Mapping
 
             CreateMap<Tag, TagDTO>().ReverseMap();
 
-            CreateMap<InvoiceTag, InvoiceTagDTO>().ReverseMap();
+            CreateMap<InvoiceTag, InvoiceTagDTO>()
+                .ForMember(to => to.TagName, c => c.MapFrom(from => from.Tag.Name))
+                .ForMember(to => to.TagColor, c => c.MapFrom(from => from.Tag.Color))
+                .ReverseMap()
+                .ForMember(to => to.Tag, opt => opt.Ignore());
         }
     }
 }
