@@ -105,7 +105,8 @@ namespace Compago.Service
                     dbTag.CreatedBy = userSecurityCredentials!.Id;
                     await dbContext.SaveChangesAsync();
 
-                    return mapper.Map<TagDTO>(dbTag);
+                    var updatedDbTag = await dbContext.Tags.Include(_ => _.InvoiceTags).FirstOrDefaultAsync(_ => _.Id == dbTag.Id);
+                    return mapper.Map<TagDTO>(updatedDbTag);
                 }
                 else
                 {
