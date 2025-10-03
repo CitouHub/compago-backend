@@ -35,11 +35,13 @@ namespace Compago.API.Security
                                     userSecurityCredentials.PasswordHash,
                                     userSecurityCredentials.PasswordHashSalt);
 
-                                cacheService.Set<UserSecurityCredentialsDTO>(userSecurityCredentials);
-
                                 if (valid == false)
                                 {
                                     throw new UnauthorizedAccessException();
+                                }
+                                else
+                                {
+                                    cacheService.Set<UserSecurityCredentialsDTO>(userSecurityCredentials);
                                 }
                             }
                             else
