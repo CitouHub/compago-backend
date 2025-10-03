@@ -13,6 +13,27 @@ namespace Compago.Test.Service
         public class AddTag
         {
             [Fact]
+            public async Task InvalidColor()
+            {
+                // Arrange
+                var dbContext = await DatabaseHelper.GetContextAsync();
+                var cacheService = GetCacheService();
+                var tagService = new TagService(dbContext, cacheService, _mapper);
+
+                var color = "invalid";
+                var tag = TagHelper.New(color: color);
+
+                // Act
+                var exception = await Assert.ThrowsAsync<ServiceException>(() =>
+                    tagService.AddTagAsync(tag));
+
+                // Assert
+                Assert.Equal(ExceptionType.InvalidRequest, exception.ExceptionType);
+                Assert.Contains(nameof(Tag.Color), exception.Message);
+                Assert.Contains(color, exception.Message);
+            }
+
+            [Fact]
             public async Task NameExists()
             {
                 // Arrange
@@ -207,6 +228,27 @@ namespace Compago.Test.Service
 
         public class UpdateTag
         {
+            [Fact]
+            public async Task InvalidColor()
+            {
+                // Arrange
+                var dbContext = await DatabaseHelper.GetContextAsync();
+                var cacheService = GetCacheService();
+                var tagService = new TagService(dbContext, cacheService, _mapper);
+
+                var color = "invalid";
+                var tag = TagHelper.New(color: color);
+
+                // Act
+                var exception = await Assert.ThrowsAsync<ServiceException>(() =>
+                    tagService.UpdateTagAsync(tag));
+
+                // Assert
+                Assert.Equal(ExceptionType.InvalidRequest, exception.ExceptionType);
+                Assert.Contains(nameof(Tag.Color), exception.Message);
+                Assert.Contains(color, exception.Message);
+            }
+
             [Fact]
             public async Task TagNotFound()
             {

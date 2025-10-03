@@ -49,7 +49,6 @@ namespace Compago.Service
             {
                 throw new ServiceException(ExceptionType.InvalidRequest, details: $"Given {nameof(Tag.Color)} = {tagDto.Color} is invalid");
             }
-            
         }
 
         public async Task DeleteTagAsync(int tagId)
@@ -92,32 +91,40 @@ namespace Compago.Service
 
         public async Task<TagDTO> UpdateTagAsync(TagDTO tagDto)
         {
-            var dbTag = await dbContext.Tags.FirstOrDefaultAsync(_ => _.Id == tagDto.Id);
-            if (dbTag != null)
+            var isValidColorCode = tagDto.Color?.IsColorCode() ?? true;
+            if (isValidColorCode == true)
             {
-                var otherTagExists = await dbContext.Tags.AnyAsync(_ => _.Name == tagDto.Name && _.Id != tagDto.Id);
-                if (otherTagExists == false)
+                var dbTag = await dbContext.Tags.FirstOrDefaultAsync(_ => _.Id == tagDto.Id);
+                if (dbTag != null)
                 {
-                    var userSecurityCredentials = cacheService.Get<UserSecurityCredentialsDTO>();
+                    var otherTagExists = await dbContext.Tags.AnyAsync(_ => _.Name == tagDto.Name && _.Id != tagDto.Id);
+                    if (otherTagExists == false)
+                    {
+                        var userSecurityCredentials = cacheService.Get<UserSecurityCredentialsDTO>();
 
-                    mapper.Map(tagDto, dbTag);
-                    dbTag.CreatedAt = DateTime.UtcNow;
-                    dbTag.CreatedBy = userSecurityCredentials!.Id;
-                    await dbContext.SaveChangesAsync();
+                        mapper.Map(tagDto, dbTag);
+                        dbTag.CreatedAt = DateTime.UtcNow;
+                        dbTag.CreatedBy = userSecurityCredentials!.Id;
+                        await dbContext.SaveChangesAsync();
 
-                    var updatedDbTag = await dbContext.Tags.Include(_ => _.InvoiceTags).FirstOrDefaultAsync(_ => _.Id == dbTag.Id);
-                    return mapper.Map<TagDTO>(updatedDbTag);
+                        var updatedDbTag = await dbContext.Tags.Include(_ => _.InvoiceTags).FirstOrDefaultAsync(_ => _.Id == dbTag.Id);
+                        return mapper.Map<TagDTO>(updatedDbTag);
+                    }
+                    else
+                    {
+                        throw new ServiceException(ExceptionType.ItemAlreadyExist, details: @$"{nameof(Tag)} with 
+                        {nameof(Tag.Name)} = {tagDto.Name} already exists");
+                    }
                 }
                 else
                 {
-                    throw new ServiceException(ExceptionType.ItemAlreadyExist, details: @$"{nameof(Tag)} with 
-                        {nameof(Tag.Name)} = {tagDto.Name} already exists");
+                    throw new ServiceException(ExceptionType.ItemNotFound, details: @$"{nameof(Tag)} with 
+                    {nameof(Tag.Id)} = {tagDto.Id} not found");
                 }
             }
             else
             {
-                throw new ServiceException(ExceptionType.ItemNotFound, details: @$"{nameof(Tag)} with 
-                    {nameof(Tag.Id)} = {tagDto.Id} not found");
+                throw new ServiceException(ExceptionType.InvalidRequest, details: $"Given {nameof(Tag.Color)} = {tagDto.Color} is invalid");
             }
         }
     }
