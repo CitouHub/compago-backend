@@ -55,7 +55,7 @@ var mappingConfig = new MapperConfiguration(config =>
 var mapper = mappingConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 
-builder.Services.AddScoped<IDelegateService, DelegateService>();
+builder.Services.AddScoped<IExternalSourceService, ExternalSourceService>();
 builder.Services.AddScoped<ICurrencyService, CurrencyService>();
 builder.Services.AddScoped<IGSuiteService, GSuiteService>();
 builder.Services.AddScoped<IMicrosoftAzureService, MicrosoftAzureService>();

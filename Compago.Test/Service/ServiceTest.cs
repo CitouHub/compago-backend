@@ -20,12 +20,12 @@ namespace Compago.Test.Service
         protected static readonly IOptions<ExternalSourceSettings.MicrosoftAzure> _microsoftAzureDefaultOptions = OptionsHelper.DefineMicrosoftAzureSettingOptions();
         protected static readonly IOptions<CurrencyServiceSettings.EX> _exDefaultOptions = OptionsHelper.DefineEXSettingOptions();
 
-        protected static readonly ILogger<DelegateService> _delegateServiceLogger = Substitute.For<ILogger<DelegateService>>();
+        protected static readonly ILogger<ExternalSourceService> _externalSourceServiceLogger = Substitute.For<ILogger<ExternalSourceService>>();
         protected static readonly ILogger<GSuiteService> _gSuiteServiceLogger = Substitute.For<ILogger<GSuiteService>>();
         protected static readonly ILogger<MicrosoftAzureService> _microsoftAzureServiceLogger = Substitute.For<ILogger<MicrosoftAzureService>>();
         protected static readonly ILogger<CurrencyService> _currencyServiceLogger = Substitute.For<ILogger<CurrencyService>>();
 
-        protected static readonly IDelegateService _delegateService = Substitute.For<IDelegateService>();
+        protected static readonly IExternalSourceService _externalSourceService = Substitute.For<IExternalSourceService>();
         protected static readonly IGSuiteService _gSuiteService = Substitute.For<IGSuiteService>();
         protected static readonly IMicrosoftAzureService _microsoftAzureService = Substitute.For<IMicrosoftAzureService>();
         protected static readonly ICurrencyService _currencyService = Substitute.For<ICurrencyService>();

@@ -11,9 +11,8 @@ namespace Compago.Service.ExternalSource.GSuite
 {
     public interface IGSuiteService
     {
-        Task<BillingDTO?> GetBillingAsync(
-            DateTime fromDate,
-            DateTime toDate);
+        Task<List<InvoiceDTO>?> GetInvoicesAsync(DateTime fromDate, DateTime toDate);
+        Task<InvoiceDTO?> GetInvoiceAsync(string id);
     }
 
     public class GSuiteService(
@@ -22,7 +21,47 @@ namespace Compago.Service.ExternalSource.GSuite
         IOptions<ExternalSourceSettings.GSuite> settings
     ) : IGSuiteService
     {
-        public async Task<BillingDTO?> GetBillingAsync(
+        public async Task<InvoiceDTO?> GetInvoiceAsync(string id)
+        {
+            logger.LogDebug("{message}", $"AUTH {settings.Value.Username} {settings.Value.Password}");
+            logger.LogDebug("{message}", $"GET {settings.Value.URL}/{id}");
+
+            // #############################
+            // ## HTTP Simulated API Call ##
+            // #############################
+            var cancellationTokenSource = new CancellationTokenSource();
+            var cancellationToken = cancellationTokenSource.Token;
+            var task = new Task<string>(_ =>
+            {
+                try
+                {
+                    var response = ExampleResponse.GetExample();
+                    if (response.FinancialInfo != null)
+                    {
+                        var requestedInvoices = response.FinancialInfo.InvoiceDescritions?
+                            .Where(_ => _.Id == id)
+                            .ToList() ?? [];
+                        response.FinancialInfo.InvoiceDescritions = requestedInvoices;
+                    }
+
+                    return JsonConvert.SerializeObject(response);
+                }
+                catch (Exception ex)
+                {
+                    throw new ServiceException(ExceptionType.ExternalSourceCallError, ex);
+                }
+            }, null);
+            task.Start();
+            await task.WaitAsync(cancellationToken);
+
+            var data = JsonConvert.DeserializeObject<Info>(task.Result);
+            var invoices = data != null ? mapper.Map<List<InvoiceDTO>>(data.FinancialInfo.InvoiceDescritions) : null;
+            (invoices ?? []).ForEach(_ => _.Currency = data?.FinancialInfo.Currency ?? null!);
+
+            return invoices?.FirstOrDefault();
+        }
+
+        public async Task<List<InvoiceDTO>?> GetInvoicesAsync(
             DateTime fromDate,
             DateTime toDate)
         {
@@ -58,7 +97,10 @@ namespace Compago.Service.ExternalSource.GSuite
             await task.WaitAsync(cancellationToken);
 
             var data = JsonConvert.DeserializeObject<Info>(task.Result);
-            return data != null ? mapper.Map<BillingDTO>(data.FinancialInfo) : null;
+            var invoices = data != null ? mapper.Map<List<InvoiceDTO>>(data.FinancialInfo.InvoiceDescritions) : null;
+            (invoices ?? []).ForEach(_ => _.Currency = data?.FinancialInfo.Currency ?? null!);
+
+            return invoices;
         }
     }
 }

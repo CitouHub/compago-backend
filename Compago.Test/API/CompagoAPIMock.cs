@@ -16,7 +16,7 @@ namespace Compago.Test.API
     {
         private readonly Dictionary<string, string?> _inMemoryConfiguration = [];
 
-        public readonly IDelegateService MockDelegateService = Substitute.For<IDelegateService>();
+        public readonly IExternalSourceService MockExternalSourceService = Substitute.For<IExternalSourceService>();
         public readonly ICurrencyService MockCurrencyService = Substitute.For<ICurrencyService>();
         public readonly IGSuiteService MockGSuiteService = Substitute.For<IGSuiteService>();
         public readonly IMicrosoftAzureService MockMicrosoftAzureService = Substitute.For<IMicrosoftAzureService>();
@@ -35,7 +35,7 @@ namespace Compago.Test.API
 
                 services.AddControllers();
 
-                services.Remove(new ServiceDescriptor(typeof(IDelegateService), ServiceLifetime.Scoped));
+                services.Remove(new ServiceDescriptor(typeof(IExternalSourceService), ServiceLifetime.Scoped));
                 services.Remove(new ServiceDescriptor(typeof(ICurrencyService), ServiceLifetime.Scoped));
                 services.Remove(new ServiceDescriptor(typeof(IGSuiteService), ServiceLifetime.Scoped));
                 services.Remove(new ServiceDescriptor(typeof(IMicrosoftAzureService), ServiceLifetime.Scoped));
@@ -43,7 +43,7 @@ namespace Compago.Test.API
                 services.Remove(new ServiceDescriptor(typeof(ITagService), ServiceLifetime.Scoped));
                 services.Remove(new ServiceDescriptor(typeof(IInvoiceTagService), ServiceLifetime.Scoped));
 
-                services.AddScoped(_ => MockDelegateService);
+                services.AddScoped(_ => MockExternalSourceService);
                 services.AddScoped(_ => MockCurrencyService);
                 services.AddScoped(_ => MockGSuiteService);
                 services.AddScoped(_ => MockMicrosoftAzureService);

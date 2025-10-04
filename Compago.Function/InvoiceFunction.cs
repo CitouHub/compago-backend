@@ -9,10 +9,10 @@ namespace Compago.Function
 {
     public class InvoiceFunction(
         ILogger<InvoiceFunction> logger,
-        IDelegateService delegateService)
+        IExternalSourceService externalSourceService)
     {
-        [Function("BillingGSuite")]
-        public async Task<IActionResult> RunBillingGSuite([HttpTrigger(AuthorizationLevel.Function, "get", Route = "billing/gsuite/{fromDate}/{toDate}")] HttpRequest _,
+        [Function("InvoicesGSuite")]
+        public async Task<IActionResult> RunInvoicesGSuite([HttpTrigger(AuthorizationLevel.Function, "get", Route = "invoices/gsuite/{fromDate}/{toDate}")] HttpRequest _,
             DateTime fromDate,
             DateTime toDate,
             string? currency)
@@ -23,12 +23,12 @@ namespace Compago.Function
             {toDate:yyyy-MM-dd}, 
             {currency}");
 
-            var billing = await delegateService.GetBillingAsync(SupportedExternalSource.GSuite, fromDate, toDate, currency);
-            return new OkObjectResult(billing);
+            var invoices = await externalSourceService.GetInvoicesAsync(SupportedExternalSource.GSuite, fromDate, toDate, currency);
+            return new OkObjectResult(invoices);
         }
 
-        [Function("BillingMicrosoftAzure")]
-        public async Task<IActionResult> RunBillingMicrosoftAzure([HttpTrigger(AuthorizationLevel.Function, "get", Route = "billing/microsoftazure/{fromDate}/{toDate}")] HttpRequest _,
+        [Function("InvoicesMicrosoftAzure")]
+        public async Task<IActionResult> RunInvoicesMicrosoftAzure([HttpTrigger(AuthorizationLevel.Function, "get", Route = "invoices/microsoftazure/{fromDate}/{toDate}")] HttpRequest _,
             DateTime fromDate,
             DateTime toDate,
             string? currency)
@@ -39,8 +39,8 @@ namespace Compago.Function
             {toDate:yyyy-MM-dd}, 
             {currency}");
 
-            var billing = await delegateService.GetBillingAsync(SupportedExternalSource.MicrosoftAzure, fromDate, toDate, currency);
-            return new OkObjectResult(billing);
+            var invoices = await externalSourceService.GetInvoicesAsync(SupportedExternalSource.MicrosoftAzure, fromDate, toDate, currency);
+            return new OkObjectResult(invoices);
         }
     }
 }

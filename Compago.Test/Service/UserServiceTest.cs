@@ -5,7 +5,6 @@ using Compago.Service.CustomeException;
 using Compago.Test.Helper;
 using Compago.Test.Helper.Domain;
 using Microsoft.EntityFrameworkCore;
-using static Compago.Test.Service.UserServiceTest;
 
 namespace Compago.Test.Service
 {

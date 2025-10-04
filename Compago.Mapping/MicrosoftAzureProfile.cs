@@ -9,10 +9,6 @@ namespace Compago.Mapping
     {
         public MicrosoftAzureProfile()
         {
-            CreateMap<Expenses, BillingDTO>()
-                .ForMember(to => to.Currency, c => c.MapFrom(from => from.Currency.ToUpper()))
-                .ForMember(to => to.Invoices, c => c.MapFrom(from => from.Monthly));
-
             CreateMap<Monthly, InvoiceDTO>()
                 .ForMember(to => to.Price, c => c.MapFrom(from => double.Parse(from.Bill.MoneyToPay.Replace(",", "."), CultureInfo.InvariantCulture)))
                 .ForMember(to => to.Id, c => c.MapFrom(from => from.Bill.Reference.ToString()))

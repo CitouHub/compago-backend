@@ -1,4 +1,5 @@
-﻿using Compago.Domain;
+﻿using Compago.Common;
+using Compago.Domain;
 
 namespace Compago.Test.Helper.Domain
 {
@@ -8,7 +9,10 @@ namespace Compago.Test.Helper.Domain
             string id = "Id",
             double price = 12.34,
             DateTime? date = null,
-            double? exchangeRate = null)
+            double? exchangeRate = null,
+            string currency = "SEK",
+            string? originalCurrency = null,
+            SupportedExternalSource supportedExternalSource = SupportedExternalSource.GSuite)
         {
             return new InvoiceDTO()
             {
@@ -16,6 +20,9 @@ namespace Compago.Test.Helper.Domain
                 Price = price,
                 Date = date ?? DateTime.UtcNow,
                 ExchangeRate = exchangeRate,
+                Currency = currency,
+                OriginalCurrency = originalCurrency,
+                Source = supportedExternalSource
             };
         }
     }

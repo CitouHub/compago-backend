@@ -24,7 +24,7 @@ namespace Compago.Test.API.ExceptionHandling
         {
             // Arrange
             var app = new CompagoAPIMock();
-            app.MockDelegateService.GetBillingAsync(
+            app.MockExternalSourceService.GetInvoicesAsync(
                 Arg.Any<SupportedExternalSource>(),
                 Arg.Any<DateTime>(),
                 Arg.Any<DateTime>(),
@@ -33,7 +33,10 @@ namespace Compago.Test.API.ExceptionHandling
 
             // Act
             var client = app.CreateClient();
-            var response = await client.GetAsync($"{Constants.API_VERSION}/billing/{SupportedExternalSource.GSuite}/{DateTime.Now:yyyy-MM-dd}/{DateTime.Now:yyyy-MM-dd}");
+            var response = await client.GetAsync(@$"{Constants.API_VERSION}/invoice/
+                {SupportedExternalSource.GSuite}/
+                {DateTime.Now:yyyy-MM-dd}/
+                {DateTime.Now:yyyy-MM-dd}");
             var result = await response.Content.ReadFromJsonAsync<ErrorDTO>();
 
             // Assert
@@ -47,7 +50,7 @@ namespace Compago.Test.API.ExceptionHandling
             // Arrange
             var app = new CompagoAPIMock();
             var details = "ExceptionDetails";
-            app.MockDelegateService.GetBillingAsync(
+            app.MockExternalSourceService.GetInvoicesAsync(
                 Arg.Any<SupportedExternalSource>(),
                 Arg.Any<DateTime>(),
                 Arg.Any<DateTime>(),
@@ -56,7 +59,7 @@ namespace Compago.Test.API.ExceptionHandling
 
             // Act
             var client = app.CreateClient();
-            var response = await client.GetAsync($"{Constants.API_VERSION}/billing/{SupportedExternalSource.GSuite}/{DateTime.Now:yyyy-MM-dd}/{DateTime.Now:yyyy-MM-dd}");
+            var response = await client.GetAsync($"{Constants.API_VERSION}/invoice/{SupportedExternalSource.GSuite}/{DateTime.Now:yyyy-MM-dd}/{DateTime.Now:yyyy-MM-dd}");
             var result = await response.Content.ReadFromJsonAsync<ErrorDTO>();
 
             // Assert
@@ -69,7 +72,7 @@ namespace Compago.Test.API.ExceptionHandling
             // Arrange
             var app = new CompagoAPIMock();
             var exceptionMessage = "InnerTestException";
-            app.MockDelegateService.GetBillingAsync(
+            app.MockExternalSourceService.GetInvoicesAsync(
                 Arg.Any<SupportedExternalSource>(),
                 Arg.Any<DateTime>(),
                 Arg.Any<DateTime>(),
@@ -78,7 +81,7 @@ namespace Compago.Test.API.ExceptionHandling
 
             // Act
             var client = app.CreateClient();
-            var response = await client.GetAsync($"{Constants.API_VERSION}/billing/{SupportedExternalSource.GSuite}/{DateTime.Now:yyyy-MM-dd}/{DateTime.Now:yyyy-MM-dd}");
+            var response = await client.GetAsync($"{Constants.API_VERSION}/invoice/{SupportedExternalSource.GSuite}/{DateTime.Now:yyyy-MM-dd}/{DateTime.Now:yyyy-MM-dd}");
             var result = await response.Content.ReadFromJsonAsync<ErrorDTO>();
 
             // Assert
@@ -90,7 +93,7 @@ namespace Compago.Test.API.ExceptionHandling
         {
             // Arrange
             var app = new CompagoAPIMock();
-            app.MockDelegateService.GetBillingAsync(
+            app.MockExternalSourceService.GetInvoicesAsync(
                 Arg.Any<SupportedExternalSource>(),
                 Arg.Any<DateTime>(),
                 Arg.Any<DateTime>(),
@@ -99,7 +102,7 @@ namespace Compago.Test.API.ExceptionHandling
 
             // Act
             var client = app.CreateClient();
-            var response = await client.GetAsync($"{Constants.API_VERSION}/billing/{SupportedExternalSource.GSuite}/{DateTime.Now:yyyy-MM-dd}/{DateTime.Now:yyyy-MM-dd}");
+            var response = await client.GetAsync($"{Constants.API_VERSION}/invoice/{SupportedExternalSource.GSuite}/{DateTime.Now:yyyy-MM-dd}/{DateTime.Now:yyyy-MM-dd}");
             var result = await response.Content.ReadFromJsonAsync<ErrorDTO>();
 
             // Assert

@@ -2,7 +2,7 @@
 
 namespace Compago.Test.Domain
 {
-    public class BillingDTOTest
+    public class InvoiceTest
     {
         [Fact]
         public static void CurrencyUpperCase()
@@ -11,21 +11,21 @@ namespace Compago.Test.Domain
             var currency = "smallCaps";
 
             // Act
-            var billing = BillingHelper.New(currency: currency);
+            var invoice = InvoiceHelper.New(currency: currency);
 
             // Assert
-            Assert.Equal(currency.ToUpper(), billing.Currency);
+            Assert.Equal(currency.ToUpper(), invoice.Currency);
         }
 
         [Fact]
         public static void CurrencyNull()
         {
             // Arrange
-            var billing = BillingHelper.New();
-            billing.Currency = null!;
+            var invoice = InvoiceHelper.New();
+            invoice.Currency = null!;
 
             // Assert
-            Assert.Null(billing.Currency);
+            Assert.Null(invoice.Currency);
         }
 
         [Fact]
@@ -35,21 +35,21 @@ namespace Compago.Test.Domain
             var currency = "smallCaps";
 
             // Act
-            var billing = BillingHelper.New(originalCurrency: currency);
+            var invoice = InvoiceHelper.New(originalCurrency: currency);
 
             // Assert
-            Assert.Equal(currency.ToUpper(), billing.OrigialCurrency);
+            Assert.Equal(currency.ToUpper(), invoice.OriginalCurrency);
         }
 
         [Fact]
         public static void OriginalCurrencyNull()
         {
             // Arrange
-            var billing = BillingHelper.New();
-            billing.OrigialCurrency = null!;
+            var invoice = InvoiceHelper.New();
+            invoice.OriginalCurrency = null!;
 
             // Assert
-            Assert.Null(billing.OrigialCurrency);
+            Assert.Null(invoice.OriginalCurrency);
         }
     }
 }

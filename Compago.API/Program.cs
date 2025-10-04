@@ -70,7 +70,7 @@ var mapper = mappingConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 builder.Services.AddSingleton<ICacheService, CacheService>();
 
-builder.Services.AddScoped<IDelegateService, DelegateService>();
+builder.Services.AddScoped<IExternalSourceService, ExternalSourceService>();
 builder.Services.AddScoped<ICurrencyService, CurrencyService>();
 builder.Services.AddScoped<IGSuiteService, GSuiteService>();
 builder.Services.AddScoped<IMicrosoftAzureService, MicrosoftAzureService>();

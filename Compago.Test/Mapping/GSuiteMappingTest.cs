@@ -9,26 +9,6 @@ namespace Compago.Test.Mapping
     {
         private static readonly IMapper _mapper = MapperHelper.DefineMapper();
 
-        public class BillingMapping
-        {
-            [Theory]
-            [InlineData("sek")]
-            [InlineData("SeK")]
-            [InlineData("SEK")]
-            public void ToDTO(string curreny)
-            {
-                // Arrange
-                var financialInfo = FinancialInfoHelper.New(currency: curreny);
-
-                // Act
-                var dto = _mapper.Map<BillingDTO>(financialInfo);
-
-                // Assert
-                Assert.NotNull(dto);
-                Assert.Equal(curreny.ToUpper(), dto.Currency);
-            }
-        }
-
         public class InvoiceMapping
         {
             [Fact]

@@ -9,14 +9,14 @@ using Xunit.Abstractions;
 
 namespace Compago.Test.API.Controller
 {
-    public class BillingControllerTest
+    public class InvoiceControllerTest
     {
         public class Authorization(ITestOutputHelper output)
         {
             private readonly AuthorizationTestHelper _authorizationTestHelper = new(output);
 
             [Theory]
-            [InlineData(Helper.HttpMethod.Get, "billing/externalSource/2025-01-01/2025-01-01", Role.Admin, Role.User)]
+            [InlineData(Helper.HttpMethod.Get, "invoice/externalSource/2025-01-01/2025-01-01", Role.Admin, Role.User)]
             public async Task AuthorizeRoles(Helper.HttpMethod httpMethod, string url, params Role[] authorizedRole)
             {
                 // Act
@@ -27,7 +27,7 @@ namespace Compago.Test.API.Controller
             }
         }
 
-        public class GetBilling()
+        public class GetInvoices()
         {
             [Theory]
             [InlineData("invalid", "2025-01-01", "2025-01-01")]
@@ -44,14 +44,14 @@ namespace Compago.Test.API.Controller
                 client.DefaultRequestHeaders.Add("X-Version", "1");
 
                 // Act
-                var response = await client.GetAsync(@$"{Constants.API_VERSION}/billing/
-                    {supportedExternalSource}/{
-                    fromDate}/
+                var response = await client.GetAsync(@$"{Constants.API_VERSION}/invoice/
+                    {supportedExternalSource}/
+                    {fromDate}/
                     {toDate}");
                 var result = await response.Content.ReadFromJsonAsync<ErrorDTO>();
 
                 // Assert
-                app.MockDelegateService.DidNotReceiveWithAnyArgs();
+                app.MockExternalSourceService.DidNotReceiveWithAnyArgs();
                 Assert.Equal((int)HttpStatusCode.BadRequest, result?.Status);
                 Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             }
@@ -63,21 +63,24 @@ namespace Compago.Test.API.Controller
                 var app = new CompagoAPIMock();
                 var client = app.CreateClient();
                 app.SetAuthorizationActive(false);
-                app.MockDelegateService.GetBillingAsync(
+                app.MockExternalSourceService.GetInvoicesAsync(
                     Arg.Any<SupportedExternalSource>(),
                     Arg.Any<DateTime>(),
                     Arg.Any<DateTime>(),
                     Arg.Any<string?>())
-                    .Returns((BillingDTO?)null);
+                    .Returns((List<InvoiceDTO>?)null);
 
                 // Act
-                var response = await client.GetAsync($"{Constants.API_VERSION}/billing/{SupportedExternalSource.GSuite}/{DateTime.UtcNow:yyyy-MM-dd}/{DateTime.UtcNow:yyyy-MM-dd}");
+                var response = await client.GetAsync(@$"{Constants.API_VERSION}/invoice/
+                    {SupportedExternalSource.GSuite}/
+                    {DateTime.UtcNow:yyyy-MM-dd}/
+                    {DateTime.UtcNow:yyyy-MM-dd}");
                 var result = await response.Content.ReadAsStringAsync();
 
                 // Assert
-                await app.MockDelegateService
+                await app.MockExternalSourceService
                     .Received(1)
-                    .GetBillingAsync(Arg.Any<SupportedExternalSource>(),
+                    .GetInvoicesAsync(Arg.Any<SupportedExternalSource>(),
                         Arg.Any<DateTime>(),
                         Arg.Any<DateTime>(),
                         Arg.Any<string?>());
@@ -98,21 +101,24 @@ namespace Compago.Test.API.Controller
                 var supportedExternalSource = SupportedExternalSource.GSuite;
                 var fromDate = new DateTime(2025, 01, 02);
                 var toDate = new DateTime(2025, 03, 04);
-                app.MockDelegateService.GetBillingAsync(
+                app.MockExternalSourceService.GetInvoicesAsync(
                     supportedExternalSource,
                     fromDate,
                     toDate,
                     currency)
-                    .Returns(new BillingDTO());
+                    .Returns([new InvoiceDTO()]);
 
                 // Act
-                var response = await client.GetAsync($"{Constants.API_VERSION}/billing/{supportedExternalSource}/{fromDate:yyyy-MM-dd}/{toDate:yyyy-MM-dd}?currency={currency}");
-                var result = await response.Content.ReadFromJsonAsync<BillingDTO>();
+                var response = await client.GetAsync(@$"{Constants.API_VERSION}/invoice/
+                    {supportedExternalSource}/
+                    {fromDate:yyyy-MM-dd}/
+                    {toDate:yyyy-MM-dd}?currency={currency}");
+                var result = await response.Content.ReadFromJsonAsync<List<InvoiceDTO>>();
 
                 // Assert
-                await app.MockDelegateService
+                await app.MockExternalSourceService
                     .Received(1)
-                    .GetBillingAsync(supportedExternalSource,
+                    .GetInvoicesAsync(supportedExternalSource,
                         fromDate,
                         toDate,
                         currency);
