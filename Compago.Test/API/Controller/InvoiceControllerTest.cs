@@ -2,9 +2,12 @@
 using Compago.Common;
 using Compago.Domain;
 using Compago.Test.Helper;
+using Compago.Test.Helper.Domain;
+using Newtonsoft.Json;
 using NSubstitute;
 using System.Net;
 using System.Net.Http.Json;
+using System.Text;
 using Xunit.Abstractions;
 
 namespace Compago.Test.API.Controller
@@ -124,6 +127,52 @@ namespace Compago.Test.API.Controller
                         currency);
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
                 Assert.NotNull(result);
+            }
+        }
+
+        public class GetInvoice
+        {
+            [Fact]
+            public async Task InvalidRequest()
+            {
+                // Arrange
+                var app = new CompagoAPIMock();
+                var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
+                client.DefaultRequestHeaders.Add("X-Version", "1");
+
+                // Act
+                var response = await client.GetAsync(@$"{Constants.API_VERSION}/invoice/invalid/1");
+                var result = await response.Content.ReadFromJsonAsync<ErrorDTO>();
+
+                // Assert
+                app.MockExternalSourceService.DidNotReceiveWithAnyArgs();
+                Assert.Equal((int)HttpStatusCode.BadRequest, result?.Status);
+                Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            }
+
+            [Fact]
+            public async Task Success()
+            {
+                // Arrange
+                var app = new CompagoAPIMock();
+                var client = app.CreateClient();
+                app.SetAuthorizationActive(false);
+
+                app.MockExternalSourceService.GetInvoiceAsync(
+                    Arg.Any<SupportedExternalSource>(), 
+                    Arg.Any<string>()).Returns(new InvoiceDTO());
+
+                // Act
+                var response = await client.GetAsync(@$"{Constants.API_VERSION}/invoice/{SupportedExternalSource.GSuite}/1");
+                var result = await response.Content.ReadFromJsonAsync<UserDTO>();
+
+                // Assert
+                Assert.NotNull(result);
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                await app.MockExternalSourceService.Received(1).GetInvoiceAsync(
+                    Arg.Any<SupportedExternalSource>(),
+                    Arg.Any<string>());
             }
         }
     }
