@@ -330,8 +330,8 @@ namespace Compago.Test.Service
                 Assert.Equal(newName, updateDbTag.Name);
                 Assert.Equal(newColor, updateDbTag.Color);
 
-                Assert.Equal(updateDbTag.CreatedBy, _cacheUserId);
-                Assert.True(updateDbTag.CreatedAt > DateTime.UtcNow.AddMinutes(-1) && updateDbTag.CreatedAt < DateTime.UtcNow.AddMinutes(1));
+                Assert.Equal(updateDbTag.UpdatedBy, _cacheUserId);
+                Assert.True(updateDbTag.UpdatedAt > DateTime.UtcNow.AddMinutes(-1) && updateDbTag.UpdatedAt < DateTime.UtcNow.AddMinutes(1));
             }
         }
 

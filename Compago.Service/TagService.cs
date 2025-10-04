@@ -103,8 +103,8 @@ namespace Compago.Service
                         var userSecurityCredentials = cacheService.Get<UserSecurityCredentialsDTO>();
 
                         mapper.Map(tagDto, dbTag);
-                        dbTag.CreatedAt = DateTime.UtcNow;
-                        dbTag.CreatedBy = userSecurityCredentials!.Id;
+                        dbTag.UpdatedAt = DateTime.UtcNow;
+                        dbTag.UpdatedBy = userSecurityCredentials!.Id;
                         await dbContext.SaveChangesAsync();
 
                         var updatedDbTag = await dbContext.Tags.Include(_ => _.InvoiceTags).FirstOrDefaultAsync(_ => _.Id == dbTag.Id);
