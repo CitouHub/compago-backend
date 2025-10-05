@@ -4,6 +4,7 @@ using Compago.Test.Helper;
 using Compago.Test.Helper.Domain;
 using NSubstitute;
 using System.Net;
+using System.Net.Http.Json;
 using Xunit.Abstractions;
 using HttpMethod = System.Net.Http.HttpMethod;
 
@@ -50,14 +51,12 @@ namespace Compago.Test.API.Controller
                 };
                 request.Headers.Add("username", username);
                 var response = await client.SendAsync(request);
-                var result = await response.Content.ReadAsStringAsync();
+                var result = await response.Content.ReadFromJsonAsync<UserDTO>();
 
                 // Assert
                 Assert.NotNull(result);
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-                _ = Enum.TryParse(result, out Role roleId);
-                Assert.Equal(userSecurityCredentials.RoleId, roleId);
+                Assert.Equal(userSecurityCredentials.RoleId, result.RoleId);
 
                 await app.MockUserService.Received(1).GetUserSecurityCredentialsAsync(username);
             }
