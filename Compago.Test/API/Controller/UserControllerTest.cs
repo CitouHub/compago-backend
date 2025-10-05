@@ -43,8 +43,8 @@ namespace Compago.Test.API.Controller
             {
                 // Arrange
                 var app = new CompagoAPIMock();
-                var client = app.CreateClient();
                 app.SetAuthorizationActive(false);
+                var client = app.CreateClient();
 
                 var request = new { roleId, username };
                 var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
@@ -64,8 +64,8 @@ namespace Compago.Test.API.Controller
             {
                 // Arrange
                 var app = new CompagoAPIMock();
-                var client = app.CreateClient();
                 app.SetAuthorizationActive(false);
+                var client = app.CreateClient();
 
                 var userDto = UserHelper.New();
                 var content = new StringContent(JsonConvert.SerializeObject(userDto), Encoding.UTF8, "application/json");
@@ -90,8 +90,8 @@ namespace Compago.Test.API.Controller
             {
                 // Arrange
                 var app = new CompagoAPIMock();
-                var client = app.CreateClient();
                 app.SetAuthorizationActive(false);
+                var client = app.CreateClient();
 
                 // Act
                 var response = await client.GetAsync($"{Constants.API_VERSION}/user/invalid");
@@ -108,8 +108,8 @@ namespace Compago.Test.API.Controller
             {
                 // Arrange
                 var app = new CompagoAPIMock();
-                var client = app.CreateClient();
                 app.SetAuthorizationActive(false);
+                var client = app.CreateClient();
 
                 var userId = 1;
                 var userDto = UserHelper.New(id: userId);
@@ -133,8 +133,8 @@ namespace Compago.Test.API.Controller
             {
                 // Arrange
                 var app = new CompagoAPIMock();
-                var client = app.CreateClient();
                 app.SetAuthorizationActive(false);
+                var client = app.CreateClient();
                 app.MockUserService.GetUsersAsync().Returns((List<UserDTO>?)null);
 
                 // Act
@@ -152,8 +152,8 @@ namespace Compago.Test.API.Controller
             {
                 // Arrange
                 var app = new CompagoAPIMock();
-                var client = app.CreateClient();
                 app.SetAuthorizationActive(false);
+                var client = app.CreateClient();
                 app.MockUserService.GetUsersAsync().Returns([new(), new()]);
 
                 // Act
@@ -176,8 +176,8 @@ namespace Compago.Test.API.Controller
             {
                 // Arrange
                 var app = new CompagoAPIMock();
-                var client = app.CreateClient();
                 app.SetAuthorizationActive(false);
+                var client = app.CreateClient();
 
                 var request = new { roleId, username };
                 var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
@@ -197,8 +197,8 @@ namespace Compago.Test.API.Controller
             {
                 // Arrange
                 var app = new CompagoAPIMock();
-                var client = app.CreateClient();
                 app.SetAuthorizationActive(false);
+                var client = app.CreateClient();
 
                 var userDto = UserHelper.New();
                 var content = new StringContent(JsonConvert.SerializeObject(userDto), Encoding.UTF8, "application/json");
@@ -223,8 +223,8 @@ namespace Compago.Test.API.Controller
             {
                 // Arrange
                 var app = new CompagoAPIMock();
-                var client = app.CreateClient();
                 app.SetAuthorizationActive(false);
+                var client = app.CreateClient();
 
                 // Act
                 var response = await client.DeleteAsync($"{Constants.API_VERSION}/user/invalid");
@@ -241,8 +241,8 @@ namespace Compago.Test.API.Controller
             {
                 // Arrange
                 var app = new CompagoAPIMock();
-                var client = app.CreateClient();
                 app.SetAuthorizationActive(false);
+                var client = app.CreateClient();
                 var userId = 1;
 
                 // Act

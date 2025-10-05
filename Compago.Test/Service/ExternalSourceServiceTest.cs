@@ -38,7 +38,7 @@ namespace Compago.Test.Service
 
                     await gSuiteService.Received(1).GetInvoicesAsync(Arg.Any<DateTime>(), Arg.Any<DateTime>());
                     await microsoftAzureService.Received(0).GetInvoicesAsync(Arg.Any<DateTime>(), Arg.Any<DateTime>());
-                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
+                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<SupportedExternalSource>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
                     await invoiceTagService.Received(0).GetInvoiceTagsAsync(Arg.Any<string>());
                 }
 
@@ -65,7 +65,7 @@ namespace Compago.Test.Service
 
                     await gSuiteService.Received(1).GetInvoicesAsync(from, to);
                     await microsoftAzureService.Received(0).GetInvoicesAsync(Arg.Any<DateTime>(), Arg.Any<DateTime>());
-                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
+                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<SupportedExternalSource>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
                     await invoiceTagService.Received(0).GetInvoiceTagsAsync(Arg.Any<string>());
                 }
 
@@ -96,7 +96,7 @@ namespace Compago.Test.Service
 
                     await gSuiteService.Received(1).GetInvoicesAsync(from, to);
                     await microsoftAzureService.Received(0).GetInvoicesAsync(Arg.Any<DateTime>(), Arg.Any<DateTime>());
-                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
+                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<SupportedExternalSource>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
                     await invoiceTagService.Received(1).GetInvoiceTagsAsync(invoice.Id);
                 }
 
@@ -133,7 +133,7 @@ namespace Compago.Test.Service
 
                     await gSuiteService.Received(1).GetInvoicesAsync(from, to);
                     await microsoftAzureService.Received(0).GetInvoicesAsync(Arg.Any<DateTime>(), Arg.Any<DateTime>());
-                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
+                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<SupportedExternalSource>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
                     await invoiceTagService.Received(1).GetInvoiceTagsAsync(invoice1.Id);
                     await invoiceTagService.Received(1).GetInvoiceTagsAsync(invoice2.Id);
                 }
@@ -173,7 +173,7 @@ namespace Compago.Test.Service
 
                     await gSuiteService.Received(1).GetInvoicesAsync(from, to);
                     await microsoftAzureService.Received(0).GetInvoicesAsync(Arg.Any<DateTime>(), Arg.Any<DateTime>());
-                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
+                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<SupportedExternalSource>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
                     await invoiceTagService.Received(1).GetInvoiceTagsAsync(invoice1.Id);
                     await invoiceTagService.Received(1).GetInvoiceTagsAsync(invoice2.Id);
                 }
@@ -204,9 +204,9 @@ namespace Compago.Test.Service
 
                     var exchangeRate1 = 1.23;
                     var exchangeRate2 = 1.24;
-                    currencyService.GetExchangeRateAsync(invoice1.Currency, toCurrency, invoice1.Date)
+                    currencyService.GetExchangeRateAsync(SupportedExternalSource.GSuite, invoice1.Currency, toCurrency, invoice1.Date)
                         .Returns(exchangeRate1);
-                    currencyService.GetExchangeRateAsync(invoice2.Currency, toCurrency, invoice2.Date)
+                    currencyService.GetExchangeRateAsync(SupportedExternalSource.GSuite, invoice2.Currency, toCurrency, invoice2.Date)
                         .Returns(exchangeRate2);
 
                     // Act
@@ -228,8 +228,8 @@ namespace Compago.Test.Service
 
                     await gSuiteService.Received(1).GetInvoicesAsync(fromDate, toDate);
                     await microsoftAzureService.Received(0).GetInvoicesAsync(Arg.Any<DateTime>(), Arg.Any<DateTime>());
-                    await currencyService.Received(1).GetExchangeRateAsync(fromCurrencyUpper, toCurrency, invoice1.Date);
-                    await currencyService.Received(1).GetExchangeRateAsync(fromCurrencyUpper, toCurrency, invoice2.Date);
+                    await currencyService.Received(1).GetExchangeRateAsync(SupportedExternalSource.GSuite, fromCurrencyUpper, toCurrency, invoice1.Date);
+                    await currencyService.Received(1).GetExchangeRateAsync(SupportedExternalSource.GSuite, fromCurrencyUpper, toCurrency, invoice2.Date);
                     await invoiceTagService.Received(1).GetInvoiceTagsAsync(invoice1.Id);
                     await invoiceTagService.Received(1).GetInvoiceTagsAsync(invoice2.Id);
                 }
@@ -260,9 +260,9 @@ namespace Compago.Test.Service
 
                     var exchangeRate1 = 1.23;
                     var exchangeRate2 = 1.24;
-                    currencyService.GetExchangeRateAsync(invoice1.Currency, toCurrency, invoice1.Date)
+                    currencyService.GetExchangeRateAsync(SupportedExternalSource.GSuite, invoice1.Currency, toCurrency, invoice1.Date)
                         .Returns(exchangeRate1);
-                    currencyService.GetExchangeRateAsync(invoice2.Currency, toCurrency, invoice2.Date)
+                    currencyService.GetExchangeRateAsync(SupportedExternalSource.GSuite, invoice2.Currency, toCurrency, invoice2.Date)
                         .Returns(exchangeRate2);
 
                     var invoiceTag1 = InvoiceTagHelper.New();
@@ -291,8 +291,8 @@ namespace Compago.Test.Service
 
                     await gSuiteService.Received(1).GetInvoicesAsync(fromDate, toDate);
                     await microsoftAzureService.Received(0).GetInvoicesAsync(Arg.Any<DateTime>(), Arg.Any<DateTime>());
-                    await currencyService.Received(1).GetExchangeRateAsync(fromCurrencyUpper, toCurrency, invoice1.Date);
-                    await currencyService.Received(1).GetExchangeRateAsync(fromCurrencyUpper, toCurrency, invoice2.Date);
+                    await currencyService.Received(1).GetExchangeRateAsync(SupportedExternalSource.GSuite, fromCurrencyUpper, toCurrency, invoice1.Date);
+                    await currencyService.Received(1).GetExchangeRateAsync(SupportedExternalSource.GSuite, fromCurrencyUpper, toCurrency, invoice2.Date);
                     await invoiceTagService.Received(1).GetInvoiceTagsAsync(invoice1.Id);
                     await invoiceTagService.Received(1).GetInvoiceTagsAsync(invoice2.Id);
                 }
@@ -322,7 +322,7 @@ namespace Compago.Test.Service
 
                     await gSuiteService.Received(0).GetInvoicesAsync(Arg.Any<DateTime>(), Arg.Any<DateTime>());
                     await microsoftAzureService.Received(1).GetInvoicesAsync(Arg.Any<DateTime>(), Arg.Any<DateTime>());
-                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
+                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<SupportedExternalSource>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
                     await invoiceTagService.Received(0).GetInvoiceTagsAsync(Arg.Any<string>());
                 }
 
@@ -349,7 +349,7 @@ namespace Compago.Test.Service
 
                     await gSuiteService.Received(0).GetInvoicesAsync(Arg.Any<DateTime>(), Arg.Any<DateTime>());
                     await microsoftAzureService.Received(1).GetInvoicesAsync(from, to);
-                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
+                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<SupportedExternalSource>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
                     await invoiceTagService.Received(0).GetInvoiceTagsAsync(Arg.Any<string>());
                 }
 
@@ -377,7 +377,7 @@ namespace Compago.Test.Service
 
                     await gSuiteService.Received(0).GetInvoicesAsync(Arg.Any<DateTime>(), Arg.Any<DateTime>());
                     await microsoftAzureService.Received(1).GetInvoicesAsync(from, to);
-                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
+                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<SupportedExternalSource>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
                     await invoiceTagService.Received(0).GetInvoiceTagsAsync(Arg.Any<string>());
                 }
 
@@ -415,7 +415,7 @@ namespace Compago.Test.Service
 
                     await gSuiteService.Received(0).GetInvoicesAsync(Arg.Any<DateTime>(), Arg.Any<DateTime>());
                     await microsoftAzureService.Received(1).GetInvoicesAsync(from, to);
-                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
+                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<SupportedExternalSource>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
                     await invoiceTagService.Received(1).GetInvoiceTagsAsync(invoice1.Id);
                     await invoiceTagService.Received(1).GetInvoiceTagsAsync(invoice2.Id);
                 }
@@ -456,7 +456,7 @@ namespace Compago.Test.Service
 
                     await gSuiteService.Received(0).GetInvoicesAsync(Arg.Any<DateTime>(), Arg.Any<DateTime>());
                     await microsoftAzureService.Received(1).GetInvoicesAsync(from, to);
-                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
+                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<SupportedExternalSource>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
                     await invoiceTagService.Received(1).GetInvoiceTagsAsync(invoice1.Id);
                     await invoiceTagService.Received(1).GetInvoiceTagsAsync(invoice2.Id);
                 }
@@ -487,9 +487,9 @@ namespace Compago.Test.Service
 
                     var exchangeRate1 = 1.23;
                     var exchangeRate2 = 1.24;
-                    currencyService.GetExchangeRateAsync(invoice1.Currency, toCurrency, invoice1.Date)
+                    currencyService.GetExchangeRateAsync(SupportedExternalSource.MicrosoftAzure, invoice1.Currency, toCurrency, invoice1.Date)
                         .Returns(exchangeRate1);
-                    currencyService.GetExchangeRateAsync(invoice2.Currency, toCurrency, invoice2.Date)
+                    currencyService.GetExchangeRateAsync(SupportedExternalSource.MicrosoftAzure, invoice2.Currency, toCurrency, invoice2.Date)
                         .Returns(exchangeRate2);
 
                     // Act
@@ -511,8 +511,8 @@ namespace Compago.Test.Service
 
                     await gSuiteService.Received(0).GetInvoicesAsync(Arg.Any<DateTime>(), Arg.Any<DateTime>());
                     await microsoftAzureService.Received(1).GetInvoicesAsync(fromDate, toDate);
-                    await currencyService.Received(1).GetExchangeRateAsync(fromCurrencyUpper, toCurrency, invoice1.Date);
-                    await currencyService.Received(1).GetExchangeRateAsync(fromCurrencyUpper, toCurrency, invoice2.Date);
+                    await currencyService.Received(1).GetExchangeRateAsync(SupportedExternalSource.MicrosoftAzure, fromCurrencyUpper, toCurrency, invoice1.Date);
+                    await currencyService.Received(1).GetExchangeRateAsync(SupportedExternalSource.MicrosoftAzure, fromCurrencyUpper, toCurrency, invoice2.Date);
                     await invoiceTagService.Received(1).GetInvoiceTagsAsync(invoice1.Id);
                     await invoiceTagService.Received(1).GetInvoiceTagsAsync(invoice2.Id);
                 }
@@ -543,9 +543,9 @@ namespace Compago.Test.Service
 
                     var exchangeRate1 = 1.23;
                     var exchangeRate2 = 1.24;
-                    currencyService.GetExchangeRateAsync(invoice1.Currency, toCurrency, invoice1.Date)
+                    currencyService.GetExchangeRateAsync(SupportedExternalSource.MicrosoftAzure, invoice1.Currency, toCurrency, invoice1.Date)
                         .Returns(exchangeRate1);
-                    currencyService.GetExchangeRateAsync(invoice2.Currency, toCurrency, invoice2.Date)
+                    currencyService.GetExchangeRateAsync(SupportedExternalSource.MicrosoftAzure, invoice2.Currency, toCurrency, invoice2.Date)
                         .Returns(exchangeRate2);
 
                     var invoiceTag1 = InvoiceTagHelper.New();
@@ -574,8 +574,8 @@ namespace Compago.Test.Service
 
                     await gSuiteService.Received(0).GetInvoicesAsync(Arg.Any<DateTime>(), Arg.Any<DateTime>());
                     await microsoftAzureService.Received(1).GetInvoicesAsync(fromDate, toDate);
-                    await currencyService.Received(1).GetExchangeRateAsync(fromCurrencyUpper, toCurrency, invoice1.Date);
-                    await currencyService.Received(1).GetExchangeRateAsync(fromCurrencyUpper, toCurrency, invoice2.Date);
+                    await currencyService.Received(1).GetExchangeRateAsync(SupportedExternalSource.MicrosoftAzure, fromCurrencyUpper, toCurrency, invoice1.Date);
+                    await currencyService.Received(1).GetExchangeRateAsync(SupportedExternalSource.MicrosoftAzure, fromCurrencyUpper, toCurrency, invoice2.Date);
                     await invoiceTagService.Received(1).GetInvoiceTagsAsync(invoice1.Id);
                     await invoiceTagService.Received(1).GetInvoiceTagsAsync(invoice2.Id);
                 }
@@ -606,7 +606,7 @@ namespace Compago.Test.Service
 
                     await gSuiteService.Received(1).GetInvoiceAsync(Arg.Any<string>());
                     await microsoftAzureService.Received(0).GetInvoiceAsync(Arg.Any<long>());
-                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
+                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<SupportedExternalSource>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
                     await invoiceTagService.Received(0).GetInvoiceTagsAsync(Arg.Any<string>());
                 }
 
@@ -631,7 +631,7 @@ namespace Compago.Test.Service
 
                     await gSuiteService.Received(1).GetInvoiceAsync(invoiceId);
                     await microsoftAzureService.Received(0).GetInvoiceAsync(Arg.Any<long>());
-                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
+                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<SupportedExternalSource>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
                     await invoiceTagService.Received(0).GetInvoiceTagsAsync(Arg.Any<string>());
                 }
 
@@ -660,7 +660,7 @@ namespace Compago.Test.Service
 
                     await gSuiteService.Received(1).GetInvoiceAsync(invoiceId);
                     await microsoftAzureService.Received(0).GetInvoiceAsync(Arg.Any<long>());
-                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
+                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<SupportedExternalSource>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
                     await invoiceTagService.Received(1).GetInvoiceTagsAsync(invoice.Id);
                 }
 
@@ -691,7 +691,7 @@ namespace Compago.Test.Service
 
                     await gSuiteService.Received(1).GetInvoiceAsync(invoiceId);
                     await microsoftAzureService.Received(0).GetInvoiceAsync(Arg.Any<long>());
-                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
+                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<SupportedExternalSource>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
                     await invoiceTagService.Received(1).GetInvoiceTagsAsync(invoice.Id);
                 }
 
@@ -714,7 +714,7 @@ namespace Compago.Test.Service
                         .Returns(invoice);
 
                     var exchangeRate = 1.23;
-                    currencyService.GetExchangeRateAsync(invoice.Currency, toCurrency, invoice.Date)
+                    currencyService.GetExchangeRateAsync(Arg.Any<SupportedExternalSource>(), invoice.Currency, toCurrency, invoice.Date)
                         .Returns(exchangeRate);
 
                     // Act
@@ -732,7 +732,7 @@ namespace Compago.Test.Service
 
                     await gSuiteService.Received(1).GetInvoiceAsync(invoice.Id);
                     await microsoftAzureService.Received(0).GetInvoiceAsync(Arg.Any<long>());
-                    await currencyService.Received(1).GetExchangeRateAsync(fromCurrencyUpper, toCurrency, invoice.Date);
+                    await currencyService.Received(1).GetExchangeRateAsync(SupportedExternalSource.GSuite, fromCurrencyUpper, toCurrency, invoice.Date);
                     await invoiceTagService.Received(1).GetInvoiceTagsAsync(invoice.Id);
                 }
 
@@ -754,7 +754,7 @@ namespace Compago.Test.Service
                     gSuiteService.GetInvoiceAsync(invoice.Id).Returns(invoice);
 
                     var exchangeRate = 1.23;
-                    currencyService.GetExchangeRateAsync(invoice.Currency, toCurrency, invoice.Date)
+                    currencyService.GetExchangeRateAsync(SupportedExternalSource.GSuite, invoice.Currency, toCurrency, invoice.Date)
                         .Returns(exchangeRate);
 
                     var invoiceTag = InvoiceTagHelper.New();
@@ -776,7 +776,7 @@ namespace Compago.Test.Service
 
                     await gSuiteService.Received(1).GetInvoiceAsync(invoice.Id);
                     await microsoftAzureService.Received(0).GetInvoiceAsync(Arg.Any<long>());
-                    await currencyService.Received(1).GetExchangeRateAsync(fromCurrencyUpper, toCurrency, invoice.Date);
+                    await currencyService.Received(1).GetExchangeRateAsync(SupportedExternalSource.GSuite, fromCurrencyUpper, toCurrency, invoice.Date);
                     await invoiceTagService.Received(1).GetInvoiceTagsAsync(invoice.Id);
                 }
             }
@@ -803,7 +803,7 @@ namespace Compago.Test.Service
 
                     await gSuiteService.Received(0).GetInvoiceAsync(Arg.Any<string>());
                     await microsoftAzureService.Received(1).GetInvoiceAsync(Arg.Any<long>());
-                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
+                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<SupportedExternalSource>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
                     await invoiceTagService.Received(0).GetInvoiceTagsAsync(Arg.Any<string>());
                 }
 
@@ -829,7 +829,7 @@ namespace Compago.Test.Service
 
                     await _gSuiteService.Received(0).GetInvoiceAsync(Arg.Any<string>());
                     await microsoftAzureService.Received(1).GetInvoiceAsync(invoiceId);
-                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
+                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<SupportedExternalSource>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
                     await invoiceTagService.Received(0).GetInvoiceTagsAsync(Arg.Any<string>());
                 }
 
@@ -858,7 +858,7 @@ namespace Compago.Test.Service
 
                     await gSuiteService.Received(0).GetInvoiceAsync(Arg.Any<string>());
                     await microsoftAzureService.Received(1).GetInvoiceAsync(invoiceId);
-                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
+                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<SupportedExternalSource>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
                     await invoiceTagService.Received(1).GetInvoiceTagsAsync(invoice.Id);
                 }
 
@@ -889,7 +889,7 @@ namespace Compago.Test.Service
 
                     await gSuiteService.Received(0).GetInvoiceAsync(Arg.Any<string>());
                     await microsoftAzureService.Received(1).GetInvoiceAsync(invoiceId);
-                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
+                    await currencyService.Received(0).GetExchangeRateAsync(Arg.Any<SupportedExternalSource>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>());
                     await invoiceTagService.Received(1).GetInvoiceTagsAsync(invoice.Id);
                 }
 
@@ -912,7 +912,7 @@ namespace Compago.Test.Service
                     microsoftAzureService.GetInvoiceAsync(invoiceId).Returns(invoice);
 
                     var exchangeRate = 1.23;
-                    currencyService.GetExchangeRateAsync(invoice.Currency, toCurrency, invoice.Date)
+                    currencyService.GetExchangeRateAsync(SupportedExternalSource.MicrosoftAzure, invoice.Currency, toCurrency, invoice.Date)
                         .Returns(exchangeRate);
 
                     // Act
@@ -930,7 +930,7 @@ namespace Compago.Test.Service
 
                     await gSuiteService.Received(0).GetInvoiceAsync(Arg.Any<string>());
                     await microsoftAzureService.Received(1).GetInvoiceAsync(invoiceId);
-                    await currencyService.Received(1).GetExchangeRateAsync(fromCurrencyUpper, toCurrency, invoice.Date);
+                    await currencyService.Received(1).GetExchangeRateAsync(SupportedExternalSource.MicrosoftAzure, fromCurrencyUpper, toCurrency, invoice.Date);
                     await invoiceTagService.Received(1).GetInvoiceTagsAsync(invoice.Id);
                 }
 
@@ -953,7 +953,7 @@ namespace Compago.Test.Service
                     microsoftAzureService.GetInvoiceAsync(invoiceId).Returns(invoice);
 
                     var exchangeRate = 1.23;
-                    currencyService.GetExchangeRateAsync(invoice.Currency, toCurrency, invoice.Date)
+                    currencyService.GetExchangeRateAsync(SupportedExternalSource.MicrosoftAzure, invoice.Currency, toCurrency, invoice.Date)
                         .Returns(exchangeRate);
 
                     var invoiceTag = InvoiceTagHelper.New();
@@ -975,7 +975,7 @@ namespace Compago.Test.Service
 
                     await gSuiteService.Received(0).GetInvoiceAsync(Arg.Any<string>());
                     await microsoftAzureService.Received(1).GetInvoiceAsync(invoiceId);
-                    await currencyService.Received(1).GetExchangeRateAsync(fromCurrencyUpper, toCurrency, invoice.Date);
+                    await currencyService.Received(1).GetExchangeRateAsync(SupportedExternalSource.MicrosoftAzure, fromCurrencyUpper, toCurrency, invoice.Date);
                     await invoiceTagService.Received(1).GetInvoiceTagsAsync(invoice.Id);
                 }
             }

@@ -1,4 +1,6 @@
-﻿namespace Compago.Domain
+﻿using Compago.Common;
+
+namespace Compago.Domain
 {
     public class InvoiceDTO
     {
@@ -6,7 +8,7 @@
         public double Price { get; set; }
         public double? ExchangeRate { get; set; }
         public DateTime Date { get; set; }
-        public Common.SupportedExternalSource Source { get; set; }
+        public SupportedExternalSource Source { get; set; }
         public List<InvoiceTagDTO> InvoiceTags { get; set; } = [];
 
         private string? OriginalCurrencyValue;

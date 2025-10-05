@@ -95,7 +95,7 @@ namespace Compago.Service
         {
             if (currency != null && currency.Replace(" ", "").Length > 0)
             {
-                var exchangeRate = await currencyService.GetExchangeRateAsync(invoice.Currency, currency, invoice.Date);
+                var exchangeRate = await currencyService.GetExchangeRateAsync(supportedExternalSource, invoice.Currency, currency, invoice.Date);
                 invoice.Price = Math.Round(invoice.Price * exchangeRate, 2);
                 invoice.ExchangeRate = exchangeRate;
             }

@@ -2,12 +2,9 @@
 using Compago.Common;
 using Compago.Domain;
 using Compago.Test.Helper;
-using Compago.Test.Helper.Domain;
-using Newtonsoft.Json;
 using NSubstitute;
 using System.Net;
 using System.Net.Http.Json;
-using System.Text;
 using Xunit.Abstractions;
 
 namespace Compago.Test.API.Controller
@@ -42,8 +39,8 @@ namespace Compago.Test.API.Controller
             {
                 // Arrange
                 var app = new CompagoAPIMock();
-                var client = app.CreateClient();
                 app.SetAuthorizationActive(false);
+                var client = app.CreateClient();
                 client.DefaultRequestHeaders.Add("X-Version", "1");
 
                 // Act
@@ -64,8 +61,8 @@ namespace Compago.Test.API.Controller
             {
                 // Arrange
                 var app = new CompagoAPIMock();
-                var client = app.CreateClient();
                 app.SetAuthorizationActive(false);
+                var client = app.CreateClient();
                 app.MockExternalSourceService.GetInvoicesAsync(
                     Arg.Any<SupportedExternalSource>(),
                     Arg.Any<DateTime>(),
@@ -98,8 +95,8 @@ namespace Compago.Test.API.Controller
             {
                 // Arrange
                 var app = new CompagoAPIMock();
-                var client = app.CreateClient();
                 app.SetAuthorizationActive(false);
+                var client = app.CreateClient();
 
                 var supportedExternalSource = SupportedExternalSource.GSuite;
                 var fromDate = new DateTime(2025, 01, 02);
@@ -137,8 +134,9 @@ namespace Compago.Test.API.Controller
             {
                 // Arrange
                 var app = new CompagoAPIMock();
-                var client = app.CreateClient();
                 app.SetAuthorizationActive(false);
+                var client = app.CreateClient();
+                
                 client.DefaultRequestHeaders.Add("X-Version", "1");
 
                 // Act
@@ -156,8 +154,8 @@ namespace Compago.Test.API.Controller
             {
                 // Arrange
                 var app = new CompagoAPIMock();
-                var client = app.CreateClient();
                 app.SetAuthorizationActive(false);
+                var client = app.CreateClient();
 
                 app.MockExternalSourceService.GetInvoiceAsync(
                     Arg.Any<SupportedExternalSource>(), 

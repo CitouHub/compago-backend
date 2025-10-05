@@ -1,4 +1,5 @@
-﻿using Compago.Service;
+﻿using Compago.Common;
+using Compago.Service;
 
 namespace Compago.Test.Service
 {
@@ -15,7 +16,7 @@ namespace Compago.Test.Service
                 var currencyService = new CurrencyService(_currencyServiceLogger, _exDefaultOptions);
 
                 // Act 
-                var response = await currencyService.GetExchangeRateAsync("FROM", "TO", DateTime.UtcNow);
+                var response = await currencyService.GetExchangeRateAsync(SupportedExternalSource.MicrosoftAzure, "FROM", "TO", DateTime.UtcNow);
 
                 // Assert
                 Assert.NotEqual(0, response);
@@ -28,7 +29,7 @@ namespace Compago.Test.Service
                 var currencyService = new CurrencyService(_currencyServiceLogger, _exDefaultOptions);
 
                 // Act 
-                var response = await currencyService.GetExchangeRateAsync("SaME", "saME", DateTime.UtcNow);
+                var response = await currencyService.GetExchangeRateAsync(SupportedExternalSource.MicrosoftAzure, "SaME", "saME", DateTime.UtcNow);
 
                 // Assert
                 Assert.Equal(1, response);

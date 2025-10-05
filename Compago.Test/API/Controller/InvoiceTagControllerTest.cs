@@ -36,8 +36,8 @@ namespace Compago.Test.API.Controller
             {
                 // Arrange
                 var app = new CompagoAPIMock();
-                var client = app.CreateClient();
                 app.SetAuthorizationActive(false);
+                var client = app.CreateClient();
 
                 var request = new List<string>() { "invalid" };
                 var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
@@ -57,8 +57,8 @@ namespace Compago.Test.API.Controller
             {
                 // Arrange
                 var app = new CompagoAPIMock();
-                var client = app.CreateClient();
                 app.SetAuthorizationActive(false);
+                var client = app.CreateClient();
 
                 var invoiceId = "1";
                 app.MockInvoiceTagService.UpdateInvoiceTagAsync(invoiceId, Arg.Any<List<short>>()).Returns((List<InvoiceTagDTO>?)null);
@@ -79,9 +79,9 @@ namespace Compago.Test.API.Controller
             {
                 // Arrange
                 var app = new CompagoAPIMock();
-                var client = app.CreateClient();
                 app.SetAuthorizationActive(false);
-                
+                var client = app.CreateClient();
+
                 var invoiceId = "1";
                 var request = new List<short>() { 1, 2 };
                 app.MockInvoiceTagService.UpdateInvoiceTagAsync(invoiceId, Arg.Any<List<short>>()).Returns([new(), new()]);
@@ -106,8 +106,8 @@ namespace Compago.Test.API.Controller
             {
                 // Arrange
                 var app = new CompagoAPIMock();
-                var client = app.CreateClient();
                 app.SetAuthorizationActive(false);
+                var client = app.CreateClient();
 
                 var invoiceId= "1";
                 app.MockInvoiceTagService.GetInvoiceTagsAsync(invoiceId).Returns((List<InvoiceTagDTO>?)null);
@@ -127,8 +127,8 @@ namespace Compago.Test.API.Controller
             {
                 // Arrange
                 var app = new CompagoAPIMock();
-                var client = app.CreateClient();
                 app.SetAuthorizationActive(false);
+                var client = app.CreateClient();
 
                 var invoiceId = "1";
                 app.MockInvoiceTagService.GetInvoiceTagsAsync(invoiceId).Returns([new(), new()]);

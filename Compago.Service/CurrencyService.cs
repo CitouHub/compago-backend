@@ -1,4 +1,5 @@
-﻿using Compago.Service.CustomeException;
+﻿using Compago.Common;
+using Compago.Service.CustomeException;
 using Compago.Service.Settings;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -8,7 +9,7 @@ namespace Compago.Service
 {
     public interface ICurrencyService
     {
-        Task<double> GetExchangeRateAsync(string fromCurrency, string toCurrency, DateTime date);
+        Task<double> GetExchangeRateAsync(SupportedExternalSource supportExternalScope, string fromCurrency, string toCurrency, DateTime date);
     }
 
     public class CurrencyService(
@@ -16,6 +17,7 @@ namespace Compago.Service
         IOptions<CurrencyServiceSettings.EX> settings) : ICurrencyService
     {
         public async Task<double> GetExchangeRateAsync(
+            SupportedExternalSource supportedExternalSource,
             string fromCurrency, 
             string toCurrency, 
             DateTime date)
@@ -39,7 +41,7 @@ namespace Compago.Service
                     {
                         var longBytes = BitConverter.GetBytes((double)0).ToList();
 
-                        var baseFactorKey = $"{fromCurrency}{toCurrency}";
+                        var baseFactorKey = $"{supportedExternalSource}{fromCurrency}{toCurrency}";
                         var baseFactorKeyBytes = Encoding.ASCII.GetBytes(baseFactorKey).ToList().Concat(longBytes);
                         var baseFactorKeyLong = BitConverter.ToInt64([.. baseFactorKeyBytes], 0);
                         var baseFactorBase = baseFactorKeyLong % 10;

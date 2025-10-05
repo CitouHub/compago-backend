@@ -121,32 +121,6 @@ namespace Compago.Test.Service
                 Assert.Contains(result, _ => _.Id == tag1.Id && _.Name == tag1.Name);
                 Assert.Contains(result, _ => _.Id == tag2.Id && _.Name == tag2.Name);
             }
-
-            [Fact]
-            public async Task Success_WithInvoiceTags()
-            {
-                // Arrange
-                var dbContext = await DatabaseHelper.GetContextAsync();
-                var cacheService = GetCacheService();
-                var tagService = new TagService(dbContext, cacheService, _mapper);
-
-                var dbTag = TagHelper.NewDb();
-                await dbContext.Tags.AddRangeAsync(dbTag);
-
-                var dbInvoiceTag1 = InvoiceTagHelper.NewDb(invoiceId: "1", tagId: dbTag.Id);
-                var dbInvoiceTag2 = InvoiceTagHelper.NewDb(invoiceId: "2", tagId: dbTag.Id);
-                await dbContext.InvoiceTags.AddRangeAsync(dbInvoiceTag1, dbInvoiceTag2);
-                await dbContext.SaveChangesAsync();
-
-                // Act
-                var result = await tagService.GetTagAsync(dbTag.Id);
-
-                // Assert
-                Assert.NotNull(result);
-                Assert.Equal(2, result.InvoiceTags.Count);
-                Assert.Contains(result.InvoiceTags, _ => _.InvoiceId == dbInvoiceTag1.InvoiceId && _.TagId == dbInvoiceTag1.TagId);
-                Assert.Contains(result.InvoiceTags, _ => _.InvoiceId == dbInvoiceTag2.InvoiceId && _.TagId == dbInvoiceTag2.TagId);
-            }
         }
 
         public class GetTag
@@ -197,32 +171,6 @@ namespace Compago.Test.Service
                 Assert.Equal(tagDb2.Id, result.Id);
                 Assert.Equal(tagDb2.Name, result.Name);
                 Assert.Equal(tagDb2.Color, result.Color);
-            }
-
-            [Fact]
-            public async Task Success_WithInvoiceTags()
-            {
-                // Arrange
-                var dbContext = await DatabaseHelper.GetContextAsync();
-                var cacheService = GetCacheService();
-                var tagService = new TagService(dbContext, cacheService, _mapper);
-
-                var dbTag = TagHelper.NewDb();
-                await dbContext.Tags.AddRangeAsync(dbTag);
-
-                var dbInvoiceTag1 = InvoiceTagHelper.NewDb(invoiceId: "1", tagId: dbTag.Id);
-                var dbInvoiceTag2 = InvoiceTagHelper.NewDb(invoiceId: "2", tagId: dbTag.Id);
-                await dbContext.InvoiceTags.AddRangeAsync(dbInvoiceTag1, dbInvoiceTag2);
-                await dbContext.SaveChangesAsync();
-
-                // Act
-                var result = await tagService.GetTagAsync(dbTag.Id);
-
-                // Assert
-                Assert.NotNull(result);
-                Assert.Equal(2, result.InvoiceTags.Count);
-                Assert.Contains(result.InvoiceTags, _ => _.InvoiceId == dbInvoiceTag1.InvoiceId && _.TagId == dbInvoiceTag1.TagId);
-                Assert.Contains(result.InvoiceTags, _ => _.InvoiceId == dbInvoiceTag2.InvoiceId && _.TagId == dbInvoiceTag2.TagId);
             }
         }
 

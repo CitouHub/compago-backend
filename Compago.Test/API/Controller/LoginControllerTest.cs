@@ -2,13 +2,9 @@
 using Compago.Domain;
 using Compago.Test.Helper;
 using Compago.Test.Helper.Domain;
-using Newtonsoft.Json;
 using NSubstitute;
 using System.Net;
-using System.Net.Http.Json;
-using System.Text;
 using Xunit.Abstractions;
-using static System.Net.WebRequestMethods;
 using HttpMethod = System.Net.Http.HttpMethod;
 
 namespace Compago.Test.API.Controller
@@ -38,8 +34,8 @@ namespace Compago.Test.API.Controller
             {
                 // Arrange
                 var app = new CompagoAPIMock();
-                var client = app.CreateClient();
                 app.SetAuthorizationActive(false);
+                var client = app.CreateClient();
 
                 var username = "TestUser";
                 var userSecurityCredentials = UserSecurityCredentialsHelper.New();

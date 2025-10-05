@@ -1,6 +1,7 @@
 ﻿using Asp.Versioning;
 using Compago.API.Security;
 using Compago.Common;
+using Compago.Domain;
 using Compago.Service;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,7 +24,10 @@ namespace Compago.API.Controller
             var username = Request.Headers["username"];
             var userSecurityCredentials = await userService.GetUserSecurityCredentialsAsync(username!);
 
-            return Ok(userSecurityCredentials.RoleId);
+            return Ok(new UserDTO()
+            {
+                RoleId = userSecurityCredentials.RoleId
+            });
         }
     }
 }
