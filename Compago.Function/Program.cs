@@ -56,6 +56,7 @@ var mappingConfig = new MapperConfiguration(config =>
 {
     config.AddProfiles([
         new GSuiteProfile(),
+        new InternalProfile(),
         new MicrosoftAzureProfile()
     ]);
 }, logger);
